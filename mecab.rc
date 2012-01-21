@@ -1,0 +1,10 @@
+#[link(name = "rustmecab",
+       vers = "0.1",
+       uuid = "157601c8-818c-4898-b1dc-890eeeab4936",
+       url  = "https://github.com/tychosci/rust-mecab")];
+
+// FIXME: add #[crate_type = "lib"] at release time.
+
+// FIXME: remove line below at release time.
+mod testflight;
+
