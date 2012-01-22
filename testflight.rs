@@ -24,6 +24,12 @@ fn test_mecab_new(args: [str]) {
 }
 
 fn main(args: [str]) {
-    test_mecab_new(args);
+    alt task::try {||
+        test_mecab_new(args);
+        true
+    } {
+        result::ok(_) { /* do nothing */ }
+        result::err(_) { sys::set_exit_status(1); }
+    }
     // let _res = mecab_do(vec::len(args), args);
 }
