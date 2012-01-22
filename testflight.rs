@@ -79,6 +79,7 @@ fn example_singlethread_use2() {
 }
 
 fn main(args: [str]) {
+    std::io::print(#fmt["version: %s\n", mecab::mecab_version()]);
     alt task::try {||
         example_singlethread(args);
         example_singlethread_use2();

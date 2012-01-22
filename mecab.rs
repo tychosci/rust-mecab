@@ -15,7 +15,7 @@ use std;
 // -*- rust -*-
 import option::{some, none};
 
-export mecab_new, mecab_new2, mecab_do;
+export mecab_new, mecab_new2, mecab_do, mecab_version;
 export mecab;
 export mecab_dictionary_info;
 
@@ -63,6 +63,8 @@ native mod _mecab {
 
     fn mecab_dictionary_info(mecab: *mecab_t)
         -> *::mecab_dictionary_info_t;
+
+    fn mecab_version() -> str::sbuf;
 
 }
 
@@ -242,3 +244,7 @@ fn mecab_do(argc: uint, args: [str]) -> int unsafe {
     res as int
 }
 
+fn mecab_version() -> str unsafe {
+    let vers = _mecab::mecab_version();
+    str::from_cstr(vers)
+}
