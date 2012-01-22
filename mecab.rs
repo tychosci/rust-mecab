@@ -1,6 +1,6 @@
 use std;
 
-export mecab_new, imecab;
+export mecab_new, mecab_do, imecab;
 
 //-- FIXME ------------------------------------------------------
 //
