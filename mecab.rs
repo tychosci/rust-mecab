@@ -67,9 +67,9 @@ type mecab_dictionary_info_t =
     };
 
 iface mecab_dictionary_info {
-    fn to_next();
+    fn bump();
 
-    fn has_next() -> bool;
+    fn is_end() -> bool;
 
     fn get_filename() -> str;
 
@@ -84,15 +84,11 @@ iface mecab_dictionary_info {
 
 impl of mecab_dictionary_info for *mecab_dictionary_info_t {
 
-    fn to_next() {
+    fn bump() unsafe {
     }
 
-    fn has_next() -> bool unsafe {
-        if (*self).next == ptr::null() {
-            false
-        } else {
-            true
-        }
+    fn is_end() -> bool unsafe {
+        if self == ptr::null() { true } else { false }
     }
 
     fn get_filename() -> str unsafe {
@@ -115,11 +111,11 @@ impl of mecab_dictionary_info for *mecab_dictionary_info_t {
 
 impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 
-    fn to_next() unsafe {
+    fn bump() unsafe {
         self.base = (*self.base).next as *mecab_dictionary_info_t;
     }
 
-    fn has_next() -> bool { self.base.has_next() }
+    fn is_end() -> bool { self.base.is_end() }
 
     fn get_filename() -> str unsafe { self.base.get_filename() }
 

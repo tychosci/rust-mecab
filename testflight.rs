@@ -28,12 +28,12 @@ fn test_mecab_new(args: [str]) {
             std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
 
             /* FIXME: incorrect `to_next()`.
-            do {
+            while !dict.is_end() {
                 std::io::println("---------------");
                 std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
                 std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
-                dict.to_next();
-            } while dict.has_next();
+                dict.bump();
+            }
             */
         }
         none::<str> {
