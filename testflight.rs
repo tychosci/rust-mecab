@@ -21,6 +21,20 @@ fn test_mecab_new(args: [str]) {
         some::<str>(s) {
             std::io::print(#fmt["input: %s\n", input]);
             std::io::print(#fmt["output:\n%s", s]);
+
+            let dict = m.get_dictionary_info();
+
+            std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
+            std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
+
+            /* FIXME: incorrect `to_next()`.
+            do {
+                std::io::println("---------------");
+                std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
+                std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
+                dict.to_next();
+            } while dict.has_next();
+            */
         }
         none::<str> {
             fail #fmt["Exception: %s", m.strerror()];

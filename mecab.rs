@@ -42,7 +42,7 @@ native mod _mecab {
         -> str::sbuf;
 
     fn mecab_dictionary_info(mecab: *mecab_t)
-        -> *mecab_dictionary_info_t;
+        -> *::mecab_dictionary_info_t;
 
 }
 
@@ -50,12 +50,25 @@ native mod _mecab {
 
 FIXME:
 
- Since there's no way to access "C" struct's
- fields from Rust, these code don't work yet.
+ Implementation is incomplete, this code fails with SIGSEGV after
+ invoking `to_next()` and then invoke any implementation's methods.
 
- Or write helper codes that take struct and return its field's value in C.
+*/
+
+type mecab_dictionary_info_t =
+    { filename: str::sbuf
+    , charset:  str::sbuf
+    , size:     uint
+    , type:      int
+    , lsize:    uint
+    , rsize:    uint
+    , version:   u16
+    , next:     *ctypes::uintptr_t
+    };
 
 iface mecab_dictionary_info {
+    fn to_next();
+
     fn has_next() -> bool;
 
     fn get_filename() -> str;
@@ -69,10 +82,13 @@ iface mecab_dictionary_info {
     fn get_version() -> uint;
 }
 
-impl of mecab_dictionary_info for *_mecab::mecab_dictionary_info_t {
+impl of mecab_dictionary_info for *mecab_dictionary_info_t {
+
+    fn to_next() {
+    }
 
     fn has_next() -> bool unsafe {
-        if self.next == ptr::null() {
+        if (*self).next == ptr::null() {
             false
         } else {
             true
@@ -80,24 +96,28 @@ impl of mecab_dictionary_info for *_mecab::mecab_dictionary_info_t {
     }
 
     fn get_filename() -> str unsafe {
-        let buf = self.filename;
+        let buf = (*self).filename;
         str::from_cstr(buf)
     }
 
     fn get_charset() -> str unsafe {
-        let buf = self.charset;
+        let buf = (*self).charset;
         str::from_cstr(buf)
     }
 
-    fn get_size()    -> uint unsafe { self.size    as uint }
-    fn get_type()    ->  int unsafe { self.type    as  int }
-    fn get_lsize()   -> uint unsafe { self.lsize   as uint }
-    fn get_rsize()   -> uint unsafe { self.rsize   as uint }
-    fn get_version() -> uint unsafe { self.version as uint }
+    fn get_size()    -> uint unsafe { (*self).size    as uint }
+    fn get_type()    ->  int unsafe { (*self).type    as  int }
+    fn get_lsize()   -> uint unsafe { (*self).lsize   as uint }
+    fn get_rsize()   -> uint unsafe { (*self).rsize   as uint }
+    fn get_version() -> uint unsafe { (*self).version as uint }
 
 }
 
-impl <T: mecab_dictionary_info> of mecab_dictionary_info for {base: T} {
+impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
+
+    fn to_next() unsafe {
+        self.base = (*self.base).next as *mecab_dictionary_info_t;
+    }
 
     fn has_next() -> bool { self.base.has_next() }
 
@@ -113,12 +133,10 @@ impl <T: mecab_dictionary_info> of mecab_dictionary_info for {base: T} {
 
 }
 
-*/
-
 iface mecab {
     fn strerror() -> str;
     fn sparse_tostr(input: str) -> option::t<str>;
-    // fn get_dictionary_info() -> mecab_dictionary_info;
+    fn get_dictionary_info() -> mecab_dictionary_info;
 }
 
 impl of mecab for *_mecab::mecab_t {
@@ -140,12 +158,10 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    /* FIXME: this doesn't work yet
     fn get_dictionary_info() -> mecab_dictionary_info {
         let dict = _mecab::mecab_dictionary_info(self);
-        {base: dict} as mecab_dictionary_info
+        {mutable base: dict} as mecab_dictionary_info
     }
-    */
 
 }
 
@@ -159,11 +175,9 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tostr(input)
     }
 
-    /* FIXME: this doesn't work yet
     fn get_dictionary_info() -> mecab_dictionary_info {
         self.base.get_dictionary_info()
     }
-    */
 
 }
 
