@@ -2,12 +2,25 @@
 // % rustc mecab.rc
 // % ./mecab test.txt
 
+fn test_pass_mecab(_mecab: mecab) {
+}
+
 fn test_mecab_new(args: [str]) {
     let m = mecab_new(vec::len(args), args);
+    test_pass_mecab(m);
+
     let input = "夕焼け小焼けの赤とんぼ";
     let output = m.sparse_tostr(input);
-    std::io::print(#fmt["input: %s\n", input]);
-    std::io::print(#fmt["output:\n%s", output]);
+
+    alt output {
+        some::<str>(s) {
+            std::io::print(#fmt["input: %s\n", input]);
+            std::io::print(#fmt["output:\n%s", s]);
+        }
+        none::<str> {
+            fail #fmt["Exception: %s", m.strerror()];
+        }
+    }
 }
 
 fn main(args: [str]) {

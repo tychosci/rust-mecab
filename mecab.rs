@@ -2,7 +2,7 @@ use std;
 
 import option::{some, none};
 
-export mecab_new, mecab_do, imecab;
+export mecab_new, mecab_do, mecab;
 
 //-- FIXME ------------------------------------------------------
 //
@@ -12,7 +12,7 @@ export mecab_new, mecab_do, imecab;
 #[link_args = "-Wl,-rpath,/usr/local/lib"]
 #[link_name = "mecab"]
 #[abi = "cdecl"]
-native mod mecab {
+native mod _mecab {
 
     // FIXME: add more types that needed to use in this binding.
     type mecab_t;
@@ -33,46 +33,39 @@ native mod mecab {
 //   These are only *test* implementation.
 //
 
-iface imecab {
+iface mecab {
     fn strerror() -> str;
-    fn check_it<V>(c: option::t<*V>);
-    fn sparse_tostr(input: str) -> str;
+    fn sparse_tostr(input: str) -> option::t<str>;
 }
 
-impl of imecab for *mecab::mecab_t {
+impl of mecab for *_mecab::mecab_t {
 
     fn strerror() -> str unsafe {
-        let res = mecab::mecab_strerror(self);
+        let res = _mecab::mecab_strerror(self);
         str::from_cstr(res)
     }
 
-    fn check_it<V>(_c: option::t<*V>) {
-        // do nothing
-    }
-
-    fn sparse_tostr(input: str) -> str unsafe {
+    fn sparse_tostr(input: str) -> option::t<str> unsafe {
         let res = str::as_buf(input) { |buf|
-            mecab::mecab_sparse_tostr(self, buf)
+            _mecab::mecab_sparse_tostr(self, buf)
         };
-        str::from_cstr(res)
+
+        if res == ptr::null() {
+            none::<str>
+        } else {
+            some::<str>(str::from_cstr(res))
+        }
     }
 
 }
 
-impl <T: imecab, C> of imecab for {base: T, cleanup: C} {
+impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
 
     fn strerror() -> str unsafe {
         self.base.strerror()
     }
 
-    fn check_it<V>(c: option::t<*V>) {
-        alt c {
-            some::<*V>(_) { /* do nothing */ }
-            none { fail #fmt["Exception: %s", self.strerror()]; }
-        }
-    }
-
-    fn sparse_tostr(input: str) -> str {
+    fn sparse_tostr(input: str) -> option::t<str> {
         self.base.sparse_tostr(input)
     }
 
@@ -83,11 +76,11 @@ impl <T: imecab, C> of imecab for {base: T, cleanup: C} {
 //   write documentation.
 //
 
-resource wrapped_mecab(m: *mecab::mecab_t) {
-    mecab::mecab_destroy(m);
+resource wrapped_mecab(m: *_mecab::mecab_t) {
+    _mecab::mecab_destroy(m);
 }
 
-fn mecab_new(argc: uint, args: [str]) -> imecab unsafe {
+fn mecab_new(argc: uint, args: [str]) -> mecab unsafe {
     let argc = argc as ctypes::c_int;
 
     let argv = [];
@@ -96,8 +89,8 @@ fn mecab_new(argc: uint, args: [str]) -> imecab unsafe {
     }
     argv += [ptr::null()];
 
-    let m = mecab::mecab_new(argc, vec::unsafe::to_ptr(argv));
-    {base: m, cleanup: wrapped_mecab(m)} as imecab
+    let m = _mecab::mecab_new(argc, vec::unsafe::to_ptr(argv));
+    {base: m, cleanup: wrapped_mecab(m)} as mecab
 }
 
 fn mecab_do(argc: uint, args: [str]) -> int unsafe {
@@ -109,7 +102,7 @@ fn mecab_do(argc: uint, args: [str]) -> int unsafe {
     }
     argv += [ptr::null()];
 
-    let res = mecab::mecab_do(argc, vec::unsafe::to_ptr(argv));
+    let res = _mecab::mecab_do(argc, vec::unsafe::to_ptr(argv));
     res as int
 }
 
