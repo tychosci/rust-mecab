@@ -2,13 +2,14 @@ use std;
 
 import option::{some, none};
 
-export mecab_new, mecab_do, mecab;
+export mecab_new, mecab_do, mecab, mecab_dictionary_info;
 
-//-- FIXME ------------------------------------------------------
+//===-- FIXME ----------------------------------------------------------====//
 //
-//   This would be failed if users installed 'mecab'
-//   with `--prefix=...` option on `./configure`.
+// This would be failed if users installed 'mecab'
+// with `--prefix=...` option on `./configure`.
 //
+
 #[link_args = "-Wl,-rpath,/usr/local/lib"]
 #[link_name = "mecab"]
 #[abi = "cdecl"]
@@ -28,9 +29,9 @@ native mod _mecab {
 
 }
 
-//-- FIXME ------------------------------------------------------
+//===-- FIXME ----------------------------------------------------------====//
 //
-//   These are only *test* implementation.
+// These are only *test* implementation.
 //
 
 iface mecab {
@@ -71,9 +72,34 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
 
 }
 
-//-- FIXME ------------------------------------------------------
+iface mecab_dictionary_info {
+    fn next() -> bool;
+    fn get_filename() -> str;
+    fn get_charset() -> str;
+    fn get_size() -> uint;
+    fn get_type() -> int;
+    fn get_lsize() -> uint;
+    fn get_rsize() -> uint;
+    fn get_version() -> uint;
+}
+
+impl mecab_dictionary_info for *_mecab::mecab_dictionary_info_t {
+
+    // FIXME: write
+    fn next() -> bool { false }
+    fn get_filename() -> str unsafe { "" }
+    fn get_charset() -> str unsafe { "" }
+    fn get_size() -> uint { 0 }
+    fn get_type() -> int { 0 }
+    fn get_lsize() -> uint { 0 }
+    fn get_rsize() -> uint { 0 }
+    fn get_version() -> uint { 0 }
+
+}
+
+//===-- FIXME ----------------------------------------------------------====//
 //
-//   write documentation.
+// write documentation.
 //
 
 resource wrapped_mecab(m: *_mecab::mecab_t) {
