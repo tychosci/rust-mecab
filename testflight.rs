@@ -1,6 +1,11 @@
-// test:
-// % rustc mecab.rc
-// % ./mecab test.txt
+/*
+
+test:
+
+  % rustc mecab.rc
+  % ./mecab test.txt
+
+*/
 
 fn test_pass_mecab(_mecab: mecab) {
 }

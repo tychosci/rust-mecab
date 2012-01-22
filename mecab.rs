@@ -1,16 +1,20 @@
 use std;
 
+// -*- rust -*-
 import option::{some, none};
 
 export mecab_new, mecab_do;
 export mecab;
 // export mecab_dictionary_info;
 
-//===-- FIXME ----------------------------------------------------------====//
-//
-// This would be failed if users installed 'mecab'
-// with `--prefix=...` option on `./configure`.
-//
+/*
+
+FIXME:
+
+ This `link_args` would be failed if users installed 'mecab'
+ with `--prefix=...` option on `./configure`.
+
+*/
 
 #[link_args = "-Wl,-rpath,/usr/local/lib"]
 #[link_name = "mecab"]
@@ -28,7 +32,8 @@ native mod _mecab {
 
     fn mecab_destroy(mecab: *mecab_t);
 
-    fn mecab_strerror(mecab: *mecab_t) -> str::sbuf;
+    fn mecab_strerror(mecab: *mecab_t)
+        -> str::sbuf;
 
     fn mecab_do(argc: ctypes::c_int, argv: *str::sbuf)
         -> ctypes::c_int;
@@ -162,10 +167,13 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
 
 }
 
-//===-- FIXME ----------------------------------------------------------====//
-//
-// write documentation.
-//
+/*
+
+FIXME:
+
+ write documentation.
+
+*/
 
 resource wrapped_mecab(m: *_mecab::mecab_t) {
     _mecab::mecab_destroy(m);
