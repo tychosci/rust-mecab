@@ -26,6 +26,11 @@ fn test_mecab_new(args: [str]) {
 
             std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
             std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
+            std::io::print(#fmt["size:     %u\n", dict.get_size()]);
+            std::io::print(#fmt["size:     %d\n", dict.get_type()]);
+            std::io::print(#fmt["size:     %u\n", dict.get_lsize()]);
+            std::io::print(#fmt["size:     %u\n", dict.get_rsize()]);
+            std::io::print(#fmt["size:     %u\n", dict.get_version()]);
 
             /* FIXME: incorrect `to_next()`.
             while !dict.is_end() {

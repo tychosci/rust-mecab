@@ -58,12 +58,12 @@ FIXME:
 type mecab_dictionary_info_t =
     { filename: str::sbuf
     , charset:  str::sbuf
-    , size:     uint
-    , type:      int
-    , lsize:    uint
-    , rsize:    uint
-    , version:   u16
-    , next:     *ctypes::uintptr_t
+    , size:     ctypes::c_uint
+    , type:     ctypes::c_int
+    , lsize:    ctypes::c_uint
+    , rsize:    ctypes::c_uint
+    , version:  u16
+    , next:     *_mecab::mecab_dictionary_info_t
     };
 
 iface mecab_dictionary_info {
