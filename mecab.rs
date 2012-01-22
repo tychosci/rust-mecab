@@ -1,3 +1,15 @@
+/*
+
+mecab.rs - The implementation of MeCab bindings for Rust.
+
+Copyright (C) 2012 Tycho Sci.
+
+FIXME:
+
+ write documentation.
+
+*/
+
 use std;
 
 // -*- rust -*-
@@ -166,14 +178,6 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
     }
 
 }
-
-/*
-
-FIXME:
-
- write documentation.
-
-*/
 
 resource wrapped_mecab(m: *_mecab::mecab_t) {
     _mecab::mecab_destroy(m);
