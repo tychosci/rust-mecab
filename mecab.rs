@@ -5,7 +5,7 @@ import option::{some, none};
 
 export mecab_new, mecab_do;
 export mecab;
-// export mecab_dictionary_info;
+export mecab_dictionary_info;
 
 /*
 
