@@ -2,7 +2,9 @@ use std;
 
 import option::{some, none};
 
-export mecab_new, mecab_do, mecab, mecab_dictionary_info;
+export mecab_new, mecab_do;
+export mecab;
+// export mecab_dictionary_info;
 
 //===-- FIXME ----------------------------------------------------------====//
 //
@@ -21,22 +23,97 @@ native mod _mecab {
     type mecab_dictionary_info_t;
 
     // FIXME: add more functions.
-    fn mecab_new(argc: ctypes::c_int, argv: *str::sbuf) -> *mecab_t;
+    fn mecab_new(argc: ctypes::c_int, argv: *str::sbuf)
+        -> *mecab_t;
+
     fn mecab_destroy(mecab: *mecab_t);
-    fn mecab_do(argc: ctypes::c_int, argv: *str::sbuf) -> ctypes::c_int;
+
     fn mecab_strerror(mecab: *mecab_t) -> str::sbuf;
-    fn mecab_sparse_tostr(mecab: *mecab_t, input: str::sbuf) -> str::sbuf;
+
+    fn mecab_do(argc: ctypes::c_int, argv: *str::sbuf)
+        -> ctypes::c_int;
+
+    fn mecab_sparse_tostr(mecab: *mecab_t, input: str::sbuf)
+        -> str::sbuf;
+
+    fn mecab_dictionary_info(mecab: *mecab_t)
+        -> *mecab_dictionary_info_t;
 
 }
 
-//===-- FIXME ----------------------------------------------------------====//
-//
-// These are only *test* implementation.
-//
+/*
+
+FIXME:
+
+ Since there's no way to access "C" struct's
+ fields from Rust, these code don't work yet.
+
+ Or write helper codes that take struct and return its field's value in C.
+
+iface mecab_dictionary_info {
+    fn has_next() -> bool;
+
+    fn get_filename() -> str;
+
+    fn get_charset()  -> str;
+
+    fn get_size()    -> uint;
+    fn get_type()    ->  int;
+    fn get_lsize()   -> uint;
+    fn get_rsize()   -> uint;
+    fn get_version() -> uint;
+}
+
+impl of mecab_dictionary_info for *_mecab::mecab_dictionary_info_t {
+
+    fn has_next() -> bool unsafe {
+        if self.next == ptr::null() {
+            false
+        } else {
+            true
+        }
+    }
+
+    fn get_filename() -> str unsafe {
+        let buf = self.filename;
+        str::from_cstr(buf)
+    }
+
+    fn get_charset() -> str unsafe {
+        let buf = self.charset;
+        str::from_cstr(buf)
+    }
+
+    fn get_size()    -> uint unsafe { self.size    as uint }
+    fn get_type()    ->  int unsafe { self.type    as  int }
+    fn get_lsize()   -> uint unsafe { self.lsize   as uint }
+    fn get_rsize()   -> uint unsafe { self.rsize   as uint }
+    fn get_version() -> uint unsafe { self.version as uint }
+
+}
+
+impl <T: mecab_dictionary_info> of mecab_dictionary_info for {base: T} {
+
+    fn has_next() -> bool { self.base.has_next() }
+
+    fn get_filename() -> str unsafe { self.base.get_filename() }
+
+    fn get_charset()  -> str unsafe { self.base.get_charset() }
+
+    fn get_size()     -> uint unsafe { self.base.get_size() }
+    fn get_type()     ->  int unsafe { self.base.get_type() }
+    fn get_lsize()    -> uint unsafe { self.base.get_lsize() }
+    fn get_rsize()    -> uint unsafe { self.base.get_rsize() }
+    fn get_version()  -> uint unsafe { self.base.get_version() }
+
+}
+
+*/
 
 iface mecab {
     fn strerror() -> str;
     fn sparse_tostr(input: str) -> option::t<str>;
+    // fn get_dictionary_info() -> mecab_dictionary_info;
 }
 
 impl of mecab for *_mecab::mecab_t {
@@ -58,6 +135,13 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
+    /* FIXME: this doesn't work yet
+    fn get_dictionary_info() -> mecab_dictionary_info {
+        let dict = _mecab::mecab_dictionary_info(self);
+        {base: dict} as mecab_dictionary_info
+    }
+    */
+
 }
 
 impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
@@ -70,30 +154,11 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tostr(input)
     }
 
-}
-
-iface mecab_dictionary_info {
-    fn next() -> bool;
-    fn get_filename() -> str;
-    fn get_charset() -> str;
-    fn get_size() -> uint;
-    fn get_type() -> int;
-    fn get_lsize() -> uint;
-    fn get_rsize() -> uint;
-    fn get_version() -> uint;
-}
-
-impl mecab_dictionary_info for *_mecab::mecab_dictionary_info_t {
-
-    // FIXME: write
-    fn next() -> bool { false }
-    fn get_filename() -> str unsafe { "" }
-    fn get_charset() -> str unsafe { "" }
-    fn get_size() -> uint { 0 }
-    fn get_type() -> int { 0 }
-    fn get_lsize() -> uint { 0 }
-    fn get_rsize() -> uint { 0 }
-    fn get_version() -> uint { 0 }
+    /* FIXME: this doesn't work yet
+    fn get_dictionary_info() -> mecab_dictionary_info {
+        self.base.get_dictionary_info()
+    }
+    */
 
 }
 

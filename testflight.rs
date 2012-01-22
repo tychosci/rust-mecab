@@ -27,8 +27,8 @@ fn main(args: [str]) {
     alt task::try {||
         test_mecab_new(args);
     } {
-        result::ok(_) { /* do nothing */ }
-        result::err(_) { sys::set_exit_status(1); }
+        result::ok(())  { /* do nothing */ }
+        result::err(()) { sys::set_exit_status(1); }
     }
     // let _res = mecab_do(vec::len(args), args);
 }
