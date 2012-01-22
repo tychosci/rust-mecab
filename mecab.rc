@@ -6,7 +6,7 @@ Copyright (C) 2012 Tycho Sci.
 
 */
 
-#[link(name = "rustmecab",
+#[link(name = "mecab",
        vers = "0.1",
        uuid = "157601c8-818c-4898-b1dc-890eeeab4936",
        url  = "https://github.com/tychosci/rust-mecab")];
