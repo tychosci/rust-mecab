@@ -3,15 +3,19 @@
 test:
 
   % rustc mecab.rc
-  % ./mecab
+  % rustc testflight.rs -L .
+  % ./testflight
 
 */
 
-fn test_pass_mecab(_mecab: mecab) {
+use std;
+use mecab;
+
+fn test_pass_mecab(_mecab: mecab::mecab) {
 }
 
 fn example_singlethread(args: [str]) {
-    let m = mecab_new(vec::len(args), args);
+    let m = mecab::mecab_new(vec::len(args), args);
 
     test_pass_mecab(m);
 
@@ -22,7 +26,6 @@ fn example_singlethread(args: [str]) {
         some::<str>(s) {
             std::io::print(#fmt["input: %s\n", input]);
             std::io::print(#fmt["output:\n%s", s]);
-
         }
         none::<str> {
             fail #fmt["Exception: %s", m.strerror()];
@@ -44,7 +47,7 @@ fn example_singlethread(args: [str]) {
 }
 
 fn example_singlethread_use2() {
-    let m = mecab_new2("");
+    let m = mecab::mecab_new2("");
 
     test_pass_mecab(m);
 
@@ -55,7 +58,6 @@ fn example_singlethread_use2() {
         some::<str>(s) {
             std::io::print(#fmt["input: %s\n", input]);
             std::io::print(#fmt["output:\n%s", s]);
-
         }
         none::<str> {
             fail #fmt["Exception: %s", m.strerror()];
