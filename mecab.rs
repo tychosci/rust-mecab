@@ -1,5 +1,7 @@
 use std;
 
+import option::{some, none};
+
 export mecab_new, mecab_do, imecab;
 
 //-- FIXME ------------------------------------------------------
@@ -31,20 +33,36 @@ native mod mecab {
 //
 
 iface imecab {
-    fn print();
+    fn strerror() -> str;
+    fn check_it<V>(c: option::t<*V>);
 }
 
 impl of imecab for *mecab::mecab_t {
-    fn print() {
-        std::io::println("woof");
+
+    fn strerror() -> str unsafe {
+        let res = mecab::mecab_strerror(self);
+        str::from_cstr(res)
     }
+
+    fn check_it<V>(_c: option::t<*V>) {
+        // do nothing
+    }
+
 }
 
 impl <T: imecab, C> of imecab for {base: T, cleanup: C} {
-    fn print() {
-        self.base.print();
-        std::io::println("meow");
+
+    fn strerror() -> str unsafe {
+        self.base.strerror()
     }
+
+    fn check_it<V>(c: option::t<*V>) {
+        alt c {
+            some::<*V>(_) { /* do nothing */ }
+            none { fail #fmt["Exception: %s", self.strerror()]; }
+        }
+    }
+
 }
 
 //-- FIXME ------------------------------------------------------
@@ -82,13 +100,3 @@ fn mecab_do(argc: uint, args: [str]) -> int unsafe {
     res as int
 }
 
-fn mecab_strerror(m: *mecab::mecab_t) -> str unsafe {
-    let res = mecab::mecab_strerror(m);
-    str::from_cstr(res)
-}
-
-fn mecab_check(m: {base: *mecab::mecab_t, cleanup: wrapped_mecab}) {
-    if m.base == ptr::null() {
-        fail #fmt["Exception: %s", mecab_strerror(m.base)];
-    }
-}
