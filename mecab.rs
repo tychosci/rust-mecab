@@ -24,6 +24,7 @@ native mod mecab {
     fn mecab_destroy(mecab: *mecab_t);
     fn mecab_do(argc: ctypes::c_int, argv: *str::sbuf) -> ctypes::c_int;
     fn mecab_strerror(mecab: *mecab_t) -> str::sbuf;
+    fn mecab_sparse_tostr(mecab: *mecab_t, input: str::sbuf) -> str::sbuf;
 
 }
 
@@ -35,6 +36,7 @@ native mod mecab {
 iface imecab {
     fn strerror() -> str;
     fn check_it<V>(c: option::t<*V>);
+    fn sparse_tostr(input: str) -> str;
 }
 
 impl of imecab for *mecab::mecab_t {
@@ -46,6 +48,13 @@ impl of imecab for *mecab::mecab_t {
 
     fn check_it<V>(_c: option::t<*V>) {
         // do nothing
+    }
+
+    fn sparse_tostr(input: str) -> str unsafe {
+        let res = str::as_buf(input) { |buf|
+            mecab::mecab_sparse_tostr(self, buf)
+        };
+        str::from_cstr(res)
     }
 
 }
@@ -61,6 +70,10 @@ impl <T: imecab, C> of imecab for {base: T, cleanup: C} {
             some::<*V>(_) { /* do nothing */ }
             none { fail #fmt["Exception: %s", self.strerror()]; }
         }
+    }
+
+    fn sparse_tostr(input: str) -> str {
+        self.base.sparse_tostr(input)
     }
 
 }
