@@ -15,7 +15,7 @@ use std;
 // -*- rust -*-
 import option::{some, none};
 
-export mecab_new, mecab_do;
+export mecab_new, mecab_new2, mecab_do;
 export mecab;
 export mecab_dictionary_info;
 
@@ -42,6 +42,9 @@ native mod _mecab {
     fn mecab_new(argc: ctypes::c_int, argv: *str::sbuf)
         -> *mecab_t;
 
+    fn mecab_new2(arg: str::sbuf)
+        -> *mecab_t;
+
     fn mecab_destroy(mecab: *mecab_t);
 
     fn mecab_strerror(mecab: *mecab_t)
@@ -51,6 +54,11 @@ native mod _mecab {
         -> ctypes::c_int;
 
     fn mecab_sparse_tostr(mecab: *mecab_t, input: str::sbuf)
+        -> str::sbuf;
+
+    fn mecab_sparse_tostr2(mecab: *mecab_t,
+                           input: str::sbuf,
+                           len:   ctypes::size_t)
         -> str::sbuf;
 
     fn mecab_dictionary_info(mecab: *mecab_t)
@@ -133,7 +141,8 @@ impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 
 iface mecab {
     fn strerror() -> str;
-    fn sparse_tostr(input: str) -> option::t<str>;
+    fn sparse_tostr(input: str)  -> option::t<str>;
+    fn sparse_tostr2(input: str) -> option::t<str>;
     fn get_dictionary_info() -> mecab_dictionary_info;
 }
 
@@ -147,6 +156,19 @@ impl of mecab for *_mecab::mecab_t {
     fn sparse_tostr(input: str) -> option::t<str> unsafe {
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tostr(self, buf)
+        };
+
+        if res == ptr::null() {
+            none::<str>
+        } else {
+            some::<str>(str::from_cstr(res))
+        }
+    }
+
+    fn sparse_tostr2(input: str) -> option::t<str> unsafe {
+        let len = str::byte_len(input) as ctypes::size_t;
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_sparse_tostr2(self, buf, len)
         };
 
         if res == ptr::null() {
@@ -173,6 +195,10 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tostr(input)
     }
 
+    fn sparse_tostr2(input: str) -> option::t<str> unsafe {
+        self.base.sparse_tostr2(input)
+    }
+
     fn get_dictionary_info() -> mecab_dictionary_info {
         self.base.get_dictionary_info()
     }
@@ -193,6 +219,13 @@ fn mecab_new(argc: uint, args: [str]) -> mecab unsafe {
     argv += [ptr::null()];
 
     let m = _mecab::mecab_new(argc, vec::unsafe::to_ptr(argv));
+    {base: m, cleanup: wrapped_mecab(m)} as mecab
+}
+
+fn mecab_new2(arg: str) -> mecab unsafe {
+    let m = str::as_buf(arg) { |buf|
+        _mecab::mecab_new2(buf)
+    };
     {base: m, cleanup: wrapped_mecab(m)} as mecab
 }
 
