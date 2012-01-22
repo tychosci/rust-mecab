@@ -16,5 +16,4 @@ FIXME: write
  License
 ---------
 
-See LICENSE.txt.
-
+This binding is licensed under the same license of MeCab.
