@@ -46,15 +46,6 @@ native mod _mecab {
 
 }
 
-/*
-
-FIXME:
-
- Implementation is incomplete, this code fails with SIGSEGV after
- invoking `to_next()` and then invoke any implementation's methods.
-
-*/
-
 type mecab_dictionary_info_t =
     { filename: str::sbuf
     , charset:  str::sbuf
@@ -72,7 +63,6 @@ iface mecab_dictionary_info {
     fn is_end() -> bool;
 
     fn get_filename() -> str;
-
     fn get_charset()  -> str;
 
     fn get_size()    -> uint;

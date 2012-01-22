@@ -24,22 +24,16 @@ fn test_mecab_new(args: [str]) {
 
             let dict = m.get_dictionary_info();
 
-            std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
-            std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
-            std::io::print(#fmt["size:     %u\n", dict.get_size()]);
-            std::io::print(#fmt["type:     %d\n", dict.get_type()]);
-            std::io::print(#fmt["lsize:    %u\n", dict.get_lsize()]);
-            std::io::print(#fmt["rsize:    %u\n", dict.get_rsize()]);
-            std::io::print(#fmt["version:  %u\n", dict.get_version()]);
-
-            /* FIXME: incorrect `to_next()`.
             while !dict.is_end() {
-                std::io::println("---------------");
                 std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
                 std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
+                std::io::print(#fmt["size:     %u\n", dict.get_size()]);
+                std::io::print(#fmt["type:     %d\n", dict.get_type()]);
+                std::io::print(#fmt["lsize:    %u\n", dict.get_lsize()]);
+                std::io::print(#fmt["rsize:    %u\n", dict.get_rsize()]);
+                std::io::print(#fmt["version:  %u\n", dict.get_version()]);
                 dict.bump();
             }
-            */
         }
         none::<str> {
             fail #fmt["Exception: %s", m.strerror()];
