@@ -21,6 +21,7 @@ native mod mecab {
     fn mecab_new(argc: ctypes::c_int, argv: *str::sbuf) -> *mecab_t;
     fn mecab_destroy(mecab: *mecab_t);
     fn mecab_do(argc: ctypes::c_int, argv: *str::sbuf) -> ctypes::c_int;
+    fn mecab_strerror(mecab: *mecab_t) -> str::sbuf;
 
 }
 
@@ -79,4 +80,15 @@ fn mecab_do(argc: uint, args: [str]) -> int unsafe {
 
     let res = mecab::mecab_do(argc, vec::unsafe::to_ptr(argv));
     res as int
+}
+
+fn mecab_strerror(m: *mecab::mecab_t) -> str unsafe {
+    let res = mecab::mecab_strerror(m);
+    str::from_cstr(res)
+}
+
+fn mecab_check(m: {base: *mecab::mecab_t, cleanup: wrapped_mecab}) {
+    if m.base == ptr::null() {
+        fail #fmt["Exception: %s", mecab_strerror(m.base)];
+    }
 }
