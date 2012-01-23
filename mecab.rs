@@ -152,7 +152,7 @@ impl of mecab_dictionary_info for *mecab_dictionary_info_t {
     }
 
     fn is_end() -> bool unsafe {
-        if self == ptr::null() { true } else { false }
+        self == ptr::null()
     }
 
     fn get_filename() -> str unsafe {
@@ -194,11 +194,17 @@ impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 }
 
 iface mecab_node {
+    fn bump();
+    fn is_end() -> bool;
     fn get_surface() -> str;
     fn get_feature() -> str;
 }
 
 impl of mecab_node for *mecab_node_t {
+
+    fn bump() unsafe { }
+
+    fn is_end() -> bool unsafe { self == ptr::null() }
 
     fn get_surface() -> str unsafe {
         let buf = (*self).surface;
@@ -220,6 +226,12 @@ impl of mecab_node for *mecab_node_t {
 }
 
 impl of mecab_node for {mutable base: *mecab_node_t} {
+
+    fn bump() unsafe {
+        self.base = (*self.base).next as *mecab_node_t;
+    }
+
+    fn is_end() -> bool { self.base.is_end() }
 
     fn get_surface() -> str unsafe {
         self.base.get_surface()

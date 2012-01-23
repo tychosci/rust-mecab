@@ -38,7 +38,10 @@ fn example_singlethread(args: [str]) {
 
     alt node {
         some::<mecab::mecab_node>(n) {
-            std::io::print(#fmt["feature: %s\n", n.get_feature()]);
+            while !n.is_end() {
+                std::io::print(#fmt["feature: %s\n", n.get_feature()]);
+                n.bump();
+            }
         }
         node::<mecab::mecab_node> {
             fail #fmt["Exception: %s", m.strerror()];
