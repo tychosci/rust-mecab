@@ -36,6 +36,7 @@ native mod _mecab {
     // FIXME: add more types that needed to use in this binding.
     type mecab_t;
     type mecab_node_t;
+    type mecab_path_t;
     type mecab_dictionary_info_t;
 
     // FIXME: add more functions.
@@ -68,6 +69,47 @@ native mod _mecab {
 
 }
 
+/*
+
+Type: mecab_node_t
+
+same structure of `_mecab::mecab_node_t` that documented in
+http://mecab.sourceforge.net/doxygen/structmecab__node__t.html
+
+*/
+type mecab_node_t =
+    { prev:     *_mecab::mecab_node_t
+    , next:     *_mecab::mecab_node_t
+    , enext:    *_mecab::mecab_node_t
+    , bnext:    *_mecab::mecab_node_t
+    , rpath:    *_mecab::mecab_path_t
+    , lpath:    *_mecab::mecab_path_t
+    , surface:   str::sbuf
+    , feature:   str::sbuf
+    , id:        ctypes::c_uint
+    , length:    u16
+    , rlength:   u16
+    , rcAttr:    u16
+    , lcAttr:    u16
+    , posid:     u16
+    , char_type: u8
+    , stat:      u8
+    , isbest:    u8
+    , alpha:     ctypes::c_float
+    , beta:      ctypes::c_float
+    , prob:      ctypes::c_float
+    , wcost:     i16
+    , cost:      ctypes::long
+    };
+
+/*
+
+Type: mecab_dictionary_info_t
+
+same structure of `_mecab::mecab_dictionary_info_t` that documented in
+http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html
+
+*/
 type mecab_dictionary_info_t =
     { filename: str::sbuf
     , charset:  str::sbuf
