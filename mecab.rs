@@ -19,6 +19,8 @@ export mecab_new, mecab_new2, mecab_do, mecab_version;
 export mecab;
 export mecab_node;
 export mecab_dictionary_info;
+export MECAB_NOR_NODE, MECAB_UNK_NODE;
+export MECAB_BOS_NODE, MECAB_EOS_NODE, MECAB_EON_NODE;
 
 /*
 
@@ -28,7 +30,6 @@ FIXME:
  with `--prefix=...` option on `./configure`.
 
 */
-
 #[link_args = "-Wl,-rpath,/usr/local/lib"]
 #[link_name = "mecab"]
 #[abi = "cdecl"]
@@ -131,6 +132,63 @@ type mecab_dictionary_info_t =
     , next:    *_mecab::mecab_dictionary_info_t
     };
 
+/*
+
+Constant: MECAB_NOR_NODE
+
+Parameters for `mecab_node_t.stat`
+Normal node defined in the dictionary.
+
+*/
+const MECAB_NOR_NODE: u8 = 0u8;
+
+/*
+
+Constant: MECAB_UNK_NODE
+
+Parameters for `mecab_node_t.stat`
+Unknown node not defined in the dictionary.
+
+*/
+const MECAB_UNK_NODE: u8 = 1u8;
+
+/*
+
+Constant: MECAB_BOS_NODE
+
+Parameters for `mecab_node_t.stat`
+Virtual node representing a beginning of the sentence.
+
+*/
+const MECAB_BOS_NODE: u8 = 2u8;
+
+/*
+
+Constant: MECAB_EOS_NODE
+
+Parameters for `mecab_node_t.stat`
+Virtual node representing a end of the sentence.
+
+*/
+const MECAB_EOS_NODE: u8 = 3u8;
+
+/*
+
+Constant: MECAB_EON_NODE
+
+Parameters for `mecab_node_t.stat`
+Virtual node representing a end of the N-best enumeration.
+
+*/
+const MECAB_EON_NODE: u8 = 4u8;
+
+/*
+
+Interface: mecab_dictionary_info
+
+FIXME: write
+
+*/
 iface mecab_dictionary_info {
     fn bump();
 
@@ -193,11 +251,22 @@ impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 
 }
 
+/*
+
+Interface: mecab_node
+
+FIXME: write
+
+*/
 iface mecab_node {
     fn bump();
+
     fn is_end() -> bool;
+
     fn get_surface() -> str;
     fn get_feature() -> str;
+
+    fn get_status() -> u8;
 }
 
 impl of mecab_node for *mecab_node_t {
@@ -213,7 +282,6 @@ impl of mecab_node for *mecab_node_t {
         let s = str::from_cstr(buf);
 
         check uint::le(begin, end);
-        log(error, end);
 
         str::safe_slice(s, begin, end)
     }
@@ -222,6 +290,8 @@ impl of mecab_node for *mecab_node_t {
         let buf = (*self).feature;
         str::from_cstr(buf)
     }
+
+    fn get_status() -> u8 unsafe { (*self).stat }
 
 }
 
@@ -241,8 +311,17 @@ impl of mecab_node for {mutable base: *mecab_node_t} {
         self.base.get_feature()
     }
 
+    fn get_status() -> u8 unsafe { self.base.get_status() }
+
 }
 
+/*
+
+Interface: mecab
+
+FIXME: write
+
+*/
 iface mecab {
     fn strerror() -> str;
     fn sparse_tostr(input: str)   -> option::t<str>;
