@@ -35,7 +35,6 @@ fn example_singlethread(args: [str]) {
             fail #fmt["Exception: %s", m.strerror()];
         }
     }
-
 }
 
 fn example_singlethread_use2() {
@@ -57,7 +56,6 @@ fn example_singlethread_use2() {
             fail #fmt["Exception: %s", m.strerror()];
         }
     }
-
 }
 
 fn example_mecab_node() {

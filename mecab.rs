@@ -12,7 +12,6 @@ FIXME:
 
 use std;
 
-// -*- rust -*-
 import option::{some, none};
 
 export mecab_new, mecab_new2, mecab_do, mecab_version;
@@ -324,10 +323,13 @@ FIXME: write
 */
 iface mecab {
     fn strerror() -> str;
+
     fn sparse_tostr(input: str)   -> option::t<str>;
     fn sparse_tostr2(input: str)  -> option::t<str>;
+
     fn sparse_tonode(input: str)  -> option::t<mecab_node>;
     fn sparse_tonode2(input: str) -> option::t<mecab_node>;
+
     fn get_dictionary_info() -> mecab_dictionary_info;
 }
 
