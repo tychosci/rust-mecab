@@ -1,7 +1,7 @@
  rust-mecab
 ============
 
-*wip* MeCab bindings for Rust.
+*wip* [MeCab](http://mecab.sourceforge.net/) bindings for Rust.
 
  Usage
 -------

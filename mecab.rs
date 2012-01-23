@@ -253,6 +253,13 @@ resource wrapped_mecab(m: *_mecab::mecab_t) {
     _mecab::mecab_destroy(m);
 }
 
+/*
+
+Function: mecab_new
+
+the wrapper of `_mecab::mecab_new` that returns wrapped structure `mecab`
+
+*/
 fn mecab_new(argc: uint, args: [str]) -> mecab unsafe {
     let argc = argc as ctypes::c_int;
 
@@ -266,6 +273,13 @@ fn mecab_new(argc: uint, args: [str]) -> mecab unsafe {
     {base: m, cleanup: wrapped_mecab(m)} as mecab
 }
 
+/*
+
+Function: mecab_new
+
+the wrapper of `_mecab::mecab_new2` that returns wrapped structure `mecab`
+
+*/
 fn mecab_new2(arg: str) -> mecab unsafe {
     let m = str::as_buf(arg) { |buf|
         _mecab::mecab_new2(buf)
@@ -273,6 +287,13 @@ fn mecab_new2(arg: str) -> mecab unsafe {
     {base: m, cleanup: wrapped_mecab(m)} as mecab
 }
 
+/*
+
+Function: mecab_do
+
+the wrapper of `_mecab::mecab_do` that returns status code at termination
+
+*/
 fn mecab_do(argc: uint, args: [str]) -> int unsafe {
     let argc = argc as ctypes::c_int;
 
@@ -286,6 +307,13 @@ fn mecab_do(argc: uint, args: [str]) -> int unsafe {
     res as int
 }
 
+/*
+
+Function: mecab_version
+
+the wrapper of `_mecab::mecab_version` that returns version-number string
+
+*/
 fn mecab_version() -> str unsafe {
     let vers = _mecab::mecab_version();
     str::from_cstr(vers)
