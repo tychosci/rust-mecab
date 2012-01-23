@@ -19,6 +19,8 @@ fn example_singlethread(args: [str]) {
 
     test_pass_mecab(m);
 
+    std::io::println("-----------------------------------------");
+
     let input = "夕焼け小焼けの赤とんぼ";
     let output = m.sparse_tostr(input);
 
@@ -28,6 +30,17 @@ fn example_singlethread(args: [str]) {
             std::io::print(#fmt["output:\n%s", s]);
         }
         none::<str> {
+            fail #fmt["Exception: %s", m.strerror()];
+        }
+    }
+
+    let node = m.sparse_tonode(input);
+
+    alt node {
+        some::<mecab::mecab_node>(n) {
+            std::io::print(#fmt["feature: %s\n", n.get_feature()]);
+        }
+        node::<mecab::mecab_node> {
             fail #fmt["Exception: %s", m.strerror()];
         }
     }
@@ -50,6 +63,8 @@ fn example_singlethread_use2() {
     let m = mecab::mecab_new2("");
 
     test_pass_mecab(m);
+
+    std::io::println("-----------------------------------------");
 
     let input = "我々は宇宙人だ";
     let output = m.sparse_tostr2(input);

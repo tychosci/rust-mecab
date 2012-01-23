@@ -17,6 +17,7 @@ import option::{some, none};
 
 export mecab_new, mecab_new2, mecab_do, mecab_version;
 export mecab;
+export mecab_node;
 export mecab_dictionary_info;
 
 /*
@@ -193,15 +194,41 @@ impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 }
 
 iface mecab_node {
-    fn dummy();
+    fn get_surface() -> str;
+    fn get_feature() -> str;
 }
 
 impl of mecab_node for *mecab_node_t {
-    fn dummy() { }
+
+    fn get_surface() -> str unsafe {
+        let buf = (*self).surface;
+        let begin = 0u;
+        let end = (*self).length as uint;
+        let s = str::from_cstr(buf);
+
+        check uint::le(begin, end);
+        log(error, end);
+
+        str::safe_slice(s, begin, end)
+    }
+
+    fn get_feature() -> str unsafe {
+        let buf = (*self).feature;
+        str::from_cstr(buf)
+    }
+
 }
 
 impl of mecab_node for {mutable base: *mecab_node_t} {
-    fn dummy() { self.base.dummy(); }
+
+    fn get_surface() -> str unsafe {
+        self.base.get_surface()
+    }
+
+    fn get_feature() -> str unsafe {
+        self.base.get_feature()
+    }
+
 }
 
 iface mecab {
