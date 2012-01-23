@@ -62,6 +62,15 @@ native mod _mecab {
                            len:   ctypes::size_t)
         -> str::sbuf;
 
+    fn mecab_sparse_tonode(mecab: *mecab_t,
+                           input: str::sbuf)
+        -> *::mecab_node_t;
+
+    fn mecab_sparse_tonode2(mecab: *mecab_t,
+                            input: str::sbuf,
+                            len:   ctypes::size_t)
+        -> *::mecab_node_t;
+
     fn mecab_dictionary_info(mecab: *mecab_t)
         -> *::mecab_dictionary_info_t;
 
@@ -118,7 +127,7 @@ type mecab_dictionary_info_t =
     , lsize:    ctypes::c_uint
     , rsize:    ctypes::c_uint
     , version:  u16
-    , next:     *_mecab::mecab_dictionary_info_t
+    , next:    *_mecab::mecab_dictionary_info_t
     };
 
 iface mecab_dictionary_info {
@@ -183,10 +192,24 @@ impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 
 }
 
+iface mecab_node {
+    fn dummy();
+}
+
+impl of mecab_node for *mecab_node_t {
+    fn dummy() { }
+}
+
+impl of mecab_node for {mutable base: *mecab_node_t} {
+    fn dummy() { self.base.dummy(); }
+}
+
 iface mecab {
     fn strerror() -> str;
-    fn sparse_tostr(input: str)  -> option::t<str>;
-    fn sparse_tostr2(input: str) -> option::t<str>;
+    fn sparse_tostr(input: str)   -> option::t<str>;
+    fn sparse_tostr2(input: str)  -> option::t<str>;
+    fn sparse_tonode(input: str)  -> option::t<mecab_node>;
+    fn sparse_tonode2(input: str) -> option::t<mecab_node>;
     fn get_dictionary_info() -> mecab_dictionary_info;
 }
 
@@ -222,6 +245,31 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
+    fn sparse_tonode(input: str) -> option::t<mecab_node> unsafe {
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_sparse_tonode(self, buf)
+        };
+
+        if res == ptr::null() {
+            none::<mecab_node>
+        } else {
+            some::<mecab_node>({mutable base: res} as mecab_node)
+        }
+    }
+
+    fn sparse_tonode2(input: str) -> option::t<mecab_node> unsafe {
+        let len = str::byte_len(input) as ctypes::size_t;
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_sparse_tonode2(self, buf, len)
+        };
+
+        if res == ptr::null() {
+            none::<mecab_node>
+        } else {
+            some::<mecab_node>({mutable base: res} as mecab_node)
+        }
+    }
+
     fn get_dictionary_info() -> mecab_dictionary_info {
         let dict = _mecab::mecab_dictionary_info(self);
         {mutable base: dict} as mecab_dictionary_info
@@ -231,7 +279,7 @@ impl of mecab for *_mecab::mecab_t {
 
 impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
 
-    fn strerror() -> str unsafe {
+    fn strerror() -> str {
         self.base.strerror()
     }
 
@@ -239,8 +287,16 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tostr(input)
     }
 
-    fn sparse_tostr2(input: str) -> option::t<str> unsafe {
+    fn sparse_tostr2(input: str) -> option::t<str> {
         self.base.sparse_tostr2(input)
+    }
+
+    fn sparse_tonode(input: str) -> option::t<mecab_node> {
+        self.base.sparse_tonode(input)
+    }
+
+    fn sparse_tonode2(input: str) -> option::t<mecab_node> {
+        self.base.sparse_tonode2(input)
     }
 
     fn get_dictionary_info() -> mecab_dictionary_info {
