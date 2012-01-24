@@ -3,7 +3,7 @@
 
 *wip* [MeCab](http://mecab.sourceforge.net/) bindings for Rust.
 
-MeCab is a Japanese Morphological Analyzer which mainly used in things
+MeCab is a Japanese Morphological Analyzer which mainly used in things  
 related with Natural Language Processing
 (e.g. IME, Search Engines, Text-to-Speech, Speech Recognition).
 
