@@ -4,6 +4,8 @@ mecab.rs - The implementation of MeCab bindings for Rust.
 
 Copyright (C) 2012 Tycho Sci.
 
+This binding is licensed under the same license of MeCab.
+
 FIXME:
 
  write documentation.
