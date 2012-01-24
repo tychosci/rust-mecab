@@ -1,7 +1,7 @@
  rust-mecab
 ============
 
-*wip* [MeCab](http://mecab.sourceforge.net/) bindings for Rust.
+[MeCab](http://mecab.sourceforge.net/) bindings for Rust.
 
 MeCab is a Japanese Morphological Analyzer which mainly used in things  
 related with Natural Language Processing
