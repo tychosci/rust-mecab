@@ -23,7 +23,7 @@ fn example_singlethread(args: [str]) {
 
     std::io::println("-----------------------------------------");
 
-    let input = "夕焼け小焼けの赤とんぼ";
+    let input = "あなたの家から、あの森まで";
     let output = m.sparse_tostr(input);
 
     alt output {
@@ -44,7 +44,7 @@ fn example_singlethread_use2() {
 
     std::io::println("-----------------------------------------");
 
-    let input = "我々は宇宙人だ";
+    let input = "抵抗は無意味だ";
     let output = m.sparse_tostr2(input);
 
     alt output {
@@ -65,7 +65,7 @@ fn example_mecab_node() {
 
     std::io::println("-----------------------------------------");
 
-    let input = "あわてて逃げるアヒル";
+    let input = "みなさんのおかげでチョー助かってます(>_<;)";
 
     let node = m.sparse_tonode(input);
     std::io::print(#fmt["input: %s\n", input]);
@@ -109,6 +109,39 @@ fn example_mecab_dict() {
     }
 }
 
+fn example_katakanize() {
+    let m = mecab::mecab_new2("");
+
+    test_pass_mecab(m);
+
+    std::io::println("-----------------------------------------");
+    std::io::println("[katakanize]");
+
+    let input = "我々は宇宙人だ";
+    std::io::print(#fmt["from: %s\n", input]);
+
+    let node = m.sparse_tonode(input);
+
+    alt node {
+        some::<mecab::mecab_node>(n) {
+            std::io::print("to:   ");
+            while !n.is_end() {
+                let stat = n.get_status();
+                if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+                    let feature = n.get_feature();
+                    let kana = str::split_str(feature, ",")[7];
+                    std::io::print(#fmt["%s", kana]);
+                }
+                n.bump();
+            }
+            std::io::print("\n");
+        }
+        none::<mecab::mecab_node> {
+            fail #fmt["Exception: %s", m.strerror()];
+        }
+    }
+}
+
 fn main(args: [str]) {
     std::io::print(#fmt["version: %s\n", mecab::mecab_version()]);
     alt task::try {||
@@ -116,6 +149,7 @@ fn main(args: [str]) {
         example_singlethread_use2();
         example_mecab_node();
         example_mecab_dict();
+        example_katakanize();
     } {
         result::ok(())  { /* do nothing */ }
         result::err(()) { sys::set_exit_status(1); }
