@@ -499,7 +499,7 @@ mod tests {
     #[test]
     fn test_sparse_tostr() {
         let m = mecab_new2("");
-        let s = "いつもより大きなリンゴがを仕入れることが出来た";
+        let s = "いつもより大きなリンゴを仕入れることが出来た";
         let r = m.sparse_tostr(s);
 
         alt r {
