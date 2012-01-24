@@ -511,7 +511,7 @@ mod tests {
     #[test]
     fn test_sparse_tostr2() {
         let m = mecab_new2("");
-        let s = "ニンニクショウガマシマシ";
+        let s = "我輩は猫である、名前は未だ無い。";
         let r = m.sparse_tostr2(s);
 
         alt r {
