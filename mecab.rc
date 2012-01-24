@@ -11,7 +11,7 @@ Copyright (C) 2012 Tycho Sci.
        uuid = "157601c8-818c-4898-b1dc-890eeeab4936",
        url  = "https://github.com/tychosci/rust-mecab")];
 
-#[comment = "MeCab bindings for Rust"]
-#[license = "GPL/LGPL/BSD"]
+#[comment = "MeCab bindings for Rust"];
+#[license = "GPL/LGPL/BSD"];
 #[crate_type = "lib"];
 
