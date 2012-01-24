@@ -487,3 +487,37 @@ fn mecab_version() -> str unsafe {
     let vers = _mecab::mecab_version();
     str::from_cstr(vers)
 }
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_mecab_version() {
+        assert 0u != str::char_len(mecab_version());
+    }
+
+    #[test]
+    fn test_sparse_tostr() {
+        let m = mecab_new2("");
+        let s = "アンドロイドは電気羊の夢を見るか？";
+        let r = m.sparse_tostr(s);
+
+        alt r {
+            some::<str>(i) { assert 0u != str::char_len(i); }
+            none::<str>    { assert false; }
+        }
+    }
+
+    #[test]
+    fn test_sparse_tostr2() {
+        let m = mecab_new2("");
+        let s = "ニンニクショウガマシマシ";
+        let r = m.sparse_tostr2(s);
+
+        alt r {
+            some::<str>(i) { assert 0u != str::char_len(i); }
+            none::<str>    { assert false; }
+        }
+    }
+
+}
