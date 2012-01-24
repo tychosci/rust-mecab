@@ -21,15 +21,6 @@ export mecab_dictionary_info;
 export MECAB_NOR_NODE, MECAB_UNK_NODE;
 export MECAB_BOS_NODE, MECAB_EOS_NODE, MECAB_EON_NODE;
 
-/*
-
-FIXME:
-
- This `link_args` would be failed if users installed 'mecab'
- with `--prefix=...` option on `./configure`.
-
-*/
-#[link_args = "-Wl,-rpath,/usr/local/lib"]
 #[link_name = "mecab"]
 #[abi = "cdecl"]
 native mod _mecab {
