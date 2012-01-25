@@ -10,7 +10,9 @@ related with Natural Language Processing
  Installation
 --------------
 
-FIXME: write
+    cargo install mecab
+
+**NOTE:** you need to install `mecab` from source or package manager if you don't have installed it yet.
 
  Examples
 ----------
