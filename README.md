@@ -19,6 +19,12 @@ related with Natural Language Processing
 
 See [testflight.rs](https://github.com/tychosci/rust-mecab/blob/master/testflight.rs).
 
+ TODO
+------
+
+- implement N-best methods
+- `mecab_model_t`
+
  License
 ---------
 
