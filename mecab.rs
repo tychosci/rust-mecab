@@ -34,41 +34,41 @@ native mod _mecab {
     type mecab_dictionary_info_t;
 
     // FIXME: add more functions.
-    fn mecab_new(argc: ctypes::c_int, argv: *str::sbuf)
+    fn mecab_new(argc: ctypes::c_int, argv: **u8)
         -> *mecab_t;
 
-    fn mecab_new2(arg: str::sbuf)
+    fn mecab_new2(arg: *u8)
         -> *mecab_t;
 
     fn mecab_destroy(mecab: *mecab_t);
 
     fn mecab_strerror(mecab: *mecab_t)
-        -> str::sbuf;
+        -> *u8;
 
-    fn mecab_do(argc: ctypes::c_int, argv: *str::sbuf)
+    fn mecab_do(argc: ctypes::c_int, argv: **u8)
         -> ctypes::c_int;
 
-    fn mecab_sparse_tostr(mecab: *mecab_t, input: str::sbuf)
-        -> str::sbuf;
+    fn mecab_sparse_tostr(mecab: *mecab_t, input: *u8)
+        -> *u8;
 
     fn mecab_sparse_tostr2(mecab: *mecab_t,
-                           input: str::sbuf,
+                           input: *u8,
                            len:   ctypes::size_t)
-        -> str::sbuf;
+        -> *u8;
 
     fn mecab_sparse_tonode(mecab: *mecab_t,
-                           input: str::sbuf)
+                           input: *u8)
         -> *::mecab_node_t;
 
     fn mecab_sparse_tonode2(mecab: *mecab_t,
-                            input: str::sbuf,
+                            input: *u8,
                             len:   ctypes::size_t)
         -> *::mecab_node_t;
 
     fn mecab_dictionary_info(mecab: *mecab_t)
         -> *::mecab_dictionary_info_t;
 
-    fn mecab_version() -> str::sbuf;
+    fn mecab_version() -> *u8;
 
 }
 
@@ -87,8 +87,8 @@ type mecab_node_t =
     , bnext:    *_mecab::mecab_node_t
     , rpath:    *_mecab::mecab_path_t
     , lpath:    *_mecab::mecab_path_t
-    , surface:   str::sbuf
-    , feature:   str::sbuf
+    , surface:   *u8
+    , feature:   *u8
     , id:        ctypes::c_uint
     , length:    u16
     , rlength:   u16
@@ -114,8 +114,8 @@ http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html
 
 */
 type mecab_dictionary_info_t =
-    { filename: str::sbuf
-    , charset:  str::sbuf
+    { filename: *u8
+    , charset:  *u8
     , size:     ctypes::c_uint
     , type:     ctypes::c_int
     , lsize:    ctypes::c_uint
