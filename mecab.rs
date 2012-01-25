@@ -14,8 +14,6 @@ FIXME:
 
 use std;
 
-import option::{some, none};
-
 export mecab_new, mecab_new2, mecab_do, mecab_version;
 export mecab;
 export mecab_node;
@@ -317,11 +315,11 @@ FIXME: write
 iface mecab {
     fn strerror() -> str;
 
-    fn sparse_tostr(input: str)   -> option::t<str>;
-    fn sparse_tostr2(input: str)  -> option::t<str>;
+    fn sparse_tostr(input: str)   -> option<str>;
+    fn sparse_tostr2(input: str)  -> option<str>;
 
-    fn sparse_tonode(input: str)  -> option::t<mecab_node>;
-    fn sparse_tonode2(input: str) -> option::t<mecab_node>;
+    fn sparse_tonode(input: str)  -> option<mecab_node>;
+    fn sparse_tonode2(input: str) -> option<mecab_node>;
 
     fn get_dictionary_info() -> mecab_dictionary_info;
 }
@@ -333,7 +331,7 @@ impl of mecab for *_mecab::mecab_t {
         str::from_cstr(res)
     }
 
-    fn sparse_tostr(input: str) -> option::t<str> unsafe {
+    fn sparse_tostr(input: str) -> option<str> unsafe {
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tostr(self, buf)
         };
@@ -345,7 +343,7 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    fn sparse_tostr2(input: str) -> option::t<str> unsafe {
+    fn sparse_tostr2(input: str) -> option<str> unsafe {
         let len = str::byte_len(input) as ctypes::size_t;
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tostr2(self, buf, len)
@@ -358,7 +356,7 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    fn sparse_tonode(input: str) -> option::t<mecab_node> unsafe {
+    fn sparse_tonode(input: str) -> option<mecab_node> unsafe {
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tonode(self, buf)
         };
@@ -370,7 +368,7 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    fn sparse_tonode2(input: str) -> option::t<mecab_node> unsafe {
+    fn sparse_tonode2(input: str) -> option<mecab_node> unsafe {
         let len = str::byte_len(input) as ctypes::size_t;
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tonode2(self, buf, len)
@@ -396,19 +394,19 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.strerror()
     }
 
-    fn sparse_tostr(input: str) -> option::t<str> {
+    fn sparse_tostr(input: str) -> option<str> {
         self.base.sparse_tostr(input)
     }
 
-    fn sparse_tostr2(input: str) -> option::t<str> {
+    fn sparse_tostr2(input: str) -> option<str> {
         self.base.sparse_tostr2(input)
     }
 
-    fn sparse_tonode(input: str) -> option::t<mecab_node> {
+    fn sparse_tonode(input: str) -> option<mecab_node> {
         self.base.sparse_tonode(input)
     }
 
-    fn sparse_tonode2(input: str) -> option::t<mecab_node> {
+    fn sparse_tonode2(input: str) -> option<mecab_node> {
         self.base.sparse_tonode2(input)
     }
 
