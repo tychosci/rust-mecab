@@ -107,7 +107,10 @@ fn example_mecab_dict() {
 
     std::io::println("-----------------------------------------");
 
-    let dict = m.get_dictionary_info();
+    let dict = alt m.get_dictionary_info() {
+        some::<mecab::mecab_dictionary_info>(_dict) { _dict }
+        none::<mecab::mecab_dictionary_info>        { fail; }
+    };
 
     while !dict.is_end() {
         std::io::print(#fmt["filename: %s\n", dict.get_filename()]);

@@ -321,7 +321,7 @@ iface mecab {
     fn sparse_tonode(input: str)  -> option<mecab_node>;
     fn sparse_tonode2(input: str) -> option<mecab_node>;
 
-    fn get_dictionary_info() -> mecab_dictionary_info;
+    fn get_dictionary_info() -> option<mecab_dictionary_info>;
 }
 
 impl of mecab for *_mecab::mecab_t {
@@ -381,9 +381,13 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    fn get_dictionary_info() -> mecab_dictionary_info {
+    fn get_dictionary_info() -> option<mecab_dictionary_info> {
         let dict = _mecab::mecab_dictionary_info(self);
-        {mutable base: dict} as mecab_dictionary_info
+        if dict == ptr::null() {
+            none
+        } else {
+            some({mutable base: dict} as mecab_dictionary_info)
+        }
     }
 
 }
@@ -410,7 +414,7 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tonode2(input)
     }
 
-    fn get_dictionary_info() -> mecab_dictionary_info {
+    fn get_dictionary_info() -> option<mecab_dictionary_info> {
         self.base.get_dictionary_info()
     }
 
