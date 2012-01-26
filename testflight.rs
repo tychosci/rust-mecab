@@ -17,7 +17,10 @@ fn test_pass_mecab(_mecab: mecab::mecab) {
 }
 
 fn example_singlethread(args: [str]) {
-    let m = mecab::mecab_new(vec::len(args), args);
+    let m = alt mecab::mecab_new(vec::len(args), args) {
+        some::<mecab::mecab>(_m) { _m }
+        none::<mecab::mecab>     { fail; }
+    };
 
     test_pass_mecab(m);
 
@@ -38,7 +41,10 @@ fn example_singlethread(args: [str]) {
 }
 
 fn example_singlethread_use2() {
-    let m = mecab::mecab_new2("");
+    let m = alt mecab::mecab_new2("") {
+        some::<mecab::mecab>(_m) { _m }
+        none::<mecab::mecab>     { fail; }
+    };
 
     test_pass_mecab(m);
 
@@ -59,7 +65,10 @@ fn example_singlethread_use2() {
 }
 
 fn example_mecab_node() {
-    let m = mecab::mecab_new2("");
+    let m = alt mecab::mecab_new2("") {
+        some::<mecab::mecab>(_m) { _m }
+        none::<mecab::mecab>     { fail; }
+    };
 
     test_pass_mecab(m);
 
@@ -89,7 +98,10 @@ fn example_mecab_node() {
 }
 
 fn example_mecab_dict() {
-    let m = mecab::mecab_new2("");
+    let m = alt mecab::mecab_new2("") {
+        some::<mecab::mecab>(_m) { _m }
+        none::<mecab::mecab>     { fail; }
+    };
 
     test_pass_mecab(m);
 
@@ -110,7 +122,10 @@ fn example_mecab_dict() {
 }
 
 fn example_katakanize() {
-    let m = mecab::mecab_new2("");
+    let m = alt mecab::mecab_new2("") {
+        some::<mecab::mecab>(_m) { _m }
+        none::<mecab::mecab>     { fail; }
+    };
 
     test_pass_mecab(m);
 

@@ -427,7 +427,7 @@ Function: mecab_new
 the wrapper of `_mecab::mecab_new` that returns wrapped structure `mecab`
 
 */
-fn mecab_new(argc: uint, args: [str]) -> mecab unsafe {
+fn mecab_new(argc: uint, args: [str]) -> option<mecab> unsafe {
     let argc = argc as ctypes::c_int;
 
     let argv = [];
@@ -437,7 +437,12 @@ fn mecab_new(argc: uint, args: [str]) -> mecab unsafe {
     argv += [ptr::null()];
 
     let m = _mecab::mecab_new(argc, vec::unsafe::to_ptr(argv));
-    {base: m, cleanup: wrapped_mecab(m)} as mecab
+
+    if m == ptr::null() {
+        none::<mecab>
+    } else {
+        some::<mecab>({base: m, cleanup: wrapped_mecab(m)} as mecab)
+    }
 }
 
 /*
@@ -447,11 +452,16 @@ Function: mecab_new
 the wrapper of `_mecab::mecab_new2` that returns wrapped structure `mecab`
 
 */
-fn mecab_new2(arg: str) -> mecab unsafe {
+fn mecab_new2(arg: str) -> option<mecab> unsafe {
     let m = str::as_buf(arg) { |buf|
         _mecab::mecab_new2(buf)
     };
-    {base: m, cleanup: wrapped_mecab(m)} as mecab
+
+    if m == ptr::null() {
+        none::<mecab>
+    } else {
+        some::<mecab>({base: m, cleanup: wrapped_mecab(m)} as mecab)
+    }
 }
 
 /*
