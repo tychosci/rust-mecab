@@ -12,7 +12,8 @@ related with Natural Language Processing
 
     cargo install mecab
 
-**NOTE:** you need to install `mecab` from source or package manager if you don't have installed it yet.
+**NOTE:** you need to install `mecab` and `mecab-ipadic` from source or package manager
+if you don't have installed it yet.
 
  Examples
 ----------
