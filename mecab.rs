@@ -512,7 +512,7 @@ mod tests {
     fn test_sparse_tostr() {
         let m = alt mecab_new2("") {
           some::<mecab>(_m) { _m }
-          none::<mecab>     { assert false; }
+          none::<mecab>     { fail; }
         };
         let s = "いつもより大きなリンゴを仕入れることが出来た";
         let r = m.sparse_tostr(s);
@@ -527,7 +527,7 @@ mod tests {
     fn test_sparse_tostr2() {
         let m = alt mecab_new2("") {
           some::<mecab>(_m) { _m }
-          none::<mecab>     { assert false; }
+          none::<mecab>     { fail; }
         };
         let s = "これはパースするための文です";
         let r = m.sparse_tostr2(s);
