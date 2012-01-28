@@ -316,10 +316,10 @@ iface mecab {
     fn strerror() -> str;
 
     fn sparse_tostr(input: str)   -> option<str>;
-    fn sparse_tostr2(input: str)  -> option<str>;
+    fn sparse_tostr2(input: str, len: uint)  -> option<str>;
 
     fn sparse_tonode(input: str)  -> option<mecab_node>;
-    fn sparse_tonode2(input: str) -> option<mecab_node>;
+    fn sparse_tonode2(input: str, len: uint) -> option<mecab_node>;
 
     fn get_dictionary_info() -> option<mecab_dictionary_info>;
 }
@@ -343,8 +343,8 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    fn sparse_tostr2(input: str) -> option<str> unsafe {
-        let len = str::byte_len(input) as ctypes::size_t;
+    fn sparse_tostr2(input: str, len: uint) -> option<str> unsafe {
+        let len = len as ctypes::size_t;
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tostr2(self, buf, len)
         };
@@ -368,8 +368,8 @@ impl of mecab for *_mecab::mecab_t {
         }
     }
 
-    fn sparse_tonode2(input: str) -> option<mecab_node> unsafe {
-        let len = str::byte_len(input) as ctypes::size_t;
+    fn sparse_tonode2(input: str, len: uint) -> option<mecab_node> unsafe {
+        let len = len as ctypes::size_t;
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tonode2(self, buf, len)
         };
@@ -402,16 +402,16 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tostr(input)
     }
 
-    fn sparse_tostr2(input: str) -> option<str> {
-        self.base.sparse_tostr2(input)
+    fn sparse_tostr2(input: str, len: uint) -> option<str> {
+        self.base.sparse_tostr2(input, len)
     }
 
     fn sparse_tonode(input: str) -> option<mecab_node> {
         self.base.sparse_tonode(input)
     }
 
-    fn sparse_tonode2(input: str) -> option<mecab_node> {
-        self.base.sparse_tonode2(input)
+    fn sparse_tonode2(input: str, len: uint) -> option<mecab_node> {
+        self.base.sparse_tonode2(input, len)
     }
 
     fn get_dictionary_info() -> option<mecab_dictionary_info> {
@@ -530,7 +530,7 @@ mod tests {
           none::<mecab>     { fail; }
         };
         let s = "これはパースするための文です";
-        let r = m.sparse_tostr2(s);
+        let r = m.sparse_tostr2(s, str::byte_len(s));
 
         alt r {
           some::<str>(i) { assert 0u != str::char_len(i); }

@@ -51,7 +51,7 @@ fn example_singlethread_use2() {
     std::io::println("-----------------------------------------");
 
     let input = "抵抗は無意味だ";
-    let output = m.sparse_tostr2(input);
+    let output = m.sparse_tostr2(input, str::byte_len(input));
 
     alt output {
       some::<str>(s) {
