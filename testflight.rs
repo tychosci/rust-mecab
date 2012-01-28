@@ -18,8 +18,8 @@ fn test_pass_mecab(_mecab: mecab::mecab) {
 
 fn example_singlethread(args: [str]) {
     let m = alt mecab::mecab_new(vec::len(args), args) {
-        some::<mecab::mecab>(_m) { _m }
-        none::<mecab::mecab>     { fail; }
+      some::<mecab::mecab>(_m) { _m }
+      none::<mecab::mecab>     { fail; }
     };
 
     test_pass_mecab(m);
@@ -30,20 +30,20 @@ fn example_singlethread(args: [str]) {
     let output = m.sparse_tostr(input);
 
     alt output {
-        some::<str>(s) {
-            std::io::print(#fmt["input: %s\n", input]);
-            std::io::print(#fmt["output:\n%s", s]);
-        }
-        none::<str> {
-            fail #fmt["Exception: %s", m.strerror()];
-        }
+      some::<str>(s) {
+        std::io::print(#fmt["input: %s\n", input]);
+        std::io::print(#fmt["output:\n%s", s]);
+      }
+      none::<str> {
+        fail #fmt["Exception: %s", m.strerror()];
+      }
     }
 }
 
 fn example_singlethread_use2() {
     let m = alt mecab::mecab_new2("") {
-        some::<mecab::mecab>(_m) { _m }
-        none::<mecab::mecab>     { fail; }
+      some::<mecab::mecab>(_m) { _m }
+      none::<mecab::mecab>     { fail; }
     };
 
     test_pass_mecab(m);
@@ -54,20 +54,20 @@ fn example_singlethread_use2() {
     let output = m.sparse_tostr2(input);
 
     alt output {
-        some::<str>(s) {
-            std::io::print(#fmt["input: %s\n", input]);
-            std::io::print(#fmt["output:\n%s", s]);
-        }
-        none::<str> {
-            fail #fmt["Exception: %s", m.strerror()];
-        }
+      some::<str>(s) {
+        std::io::print(#fmt["input: %s\n", input]);
+        std::io::print(#fmt["output:\n%s", s]);
+      }
+      none::<str> {
+        fail #fmt["Exception: %s", m.strerror()];
+      }
     }
 }
 
 fn example_mecab_node() {
     let m = alt mecab::mecab_new2("") {
-        some::<mecab::mecab>(_m) { _m }
-        none::<mecab::mecab>     { fail; }
+      some::<mecab::mecab>(_m) { _m }
+      none::<mecab::mecab>     { fail; }
     };
 
     test_pass_mecab(m);
@@ -80,27 +80,27 @@ fn example_mecab_node() {
     std::io::print(#fmt["input: %s\n", input]);
 
     alt node {
-        some::<mecab::mecab_node>(n) {
-            std::io::print("output:\n");
-            while !n.is_end() {
-                let stat = n.get_status();
-                if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
-                    std::io::print(#fmt["%s", n.get_surface()]);
-                    std::io::print(#fmt["\t%s\n", n.get_feature()]);
-                }
-                n.bump();
+      some::<mecab::mecab_node>(n) {
+        std::io::print("output:\n");
+        while !n.is_end() {
+            let stat = n.get_status();
+            if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+                std::io::print(#fmt["%s", n.get_surface()]);
+                std::io::print(#fmt["\t%s\n", n.get_feature()]);
             }
+            n.bump();
         }
-        node::<mecab::mecab_node> {
-            fail #fmt["Exception: %s", m.strerror()];
-        }
+      }
+      node::<mecab::mecab_node> {
+        fail #fmt["Exception: %s", m.strerror()];
+      }
     }
 }
 
 fn example_mecab_dict() {
     let m = alt mecab::mecab_new2("") {
-        some::<mecab::mecab>(_m) { _m }
-        none::<mecab::mecab>     { fail; }
+      some::<mecab::mecab>(_m) { _m }
+      none::<mecab::mecab>     { fail; }
     };
 
     test_pass_mecab(m);
@@ -108,8 +108,8 @@ fn example_mecab_dict() {
     std::io::println("-----------------------------------------");
 
     let dict = alt m.get_dictionary_info() {
-        some::<mecab::mecab_dictionary_info>(_dict) { _dict }
-        none::<mecab::mecab_dictionary_info>        { fail; }
+      some::<mecab::mecab_dictionary_info>(_dict) { _dict }
+      none::<mecab::mecab_dictionary_info>        { fail; }
     };
 
     while !dict.is_end() {
@@ -126,8 +126,8 @@ fn example_mecab_dict() {
 
 fn example_katakanize() {
     let m = alt mecab::mecab_new2("") {
-        some::<mecab::mecab>(_m) { _m }
-        none::<mecab::mecab>     { fail; }
+      some::<mecab::mecab>(_m) { _m }
+      none::<mecab::mecab>     { fail; }
     };
 
     test_pass_mecab(m);
@@ -141,22 +141,22 @@ fn example_katakanize() {
     let node = m.sparse_tonode(input);
 
     alt node {
-        some::<mecab::mecab_node>(n) {
-            std::io::print("to:   ");
-            while !n.is_end() {
-                let stat = n.get_status();
-                if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
-                    let feature = n.get_feature();
-                    let kana = str::split_str(feature, ",")[7];
-                    std::io::print(#fmt["%s", kana]);
-                }
-                n.bump();
+      some::<mecab::mecab_node>(n) {
+        std::io::print("to:   ");
+        while !n.is_end() {
+            let stat = n.get_status();
+            if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+                let feature = n.get_feature();
+                let kana = str::split_str(feature, ",")[7];
+                std::io::print(#fmt["%s", kana]);
             }
-            std::io::print("\n");
+            n.bump();
         }
-        none::<mecab::mecab_node> {
-            fail #fmt["Exception: %s", m.strerror()];
-        }
+        std::io::print("\n");
+      }
+      none::<mecab::mecab_node> {
+        fail #fmt["Exception: %s", m.strerror()];
+      }
     }
 }
 

@@ -510,25 +510,31 @@ mod tests {
 
     #[test]
     fn test_sparse_tostr() {
-        let m = mecab_new2("");
+        let m = alt mecab_new2("") {
+          some::<mecab>(_m) { _m }
+          none::<mecab>     { assert false; }
+        };
         let s = "いつもより大きなリンゴを仕入れることが出来た";
         let r = m.sparse_tostr(s);
 
         alt r {
-            some::<str>(i) { assert 0u != str::char_len(i); }
-            none::<str>    { assert false; }
+          some::<str>(i) { assert 0u != str::char_len(i); }
+          none::<str>    { assert false; }
         }
     }
 
     #[test]
     fn test_sparse_tostr2() {
-        let m = mecab_new2("");
+        let m = alt mecab_new2("") {
+          some::<mecab>(_m) { _m }
+          none::<mecab>     { assert false; }
+        };
         let s = "これはパースするための文です";
         let r = m.sparse_tostr2(s);
 
         alt r {
-            some::<str>(i) { assert 0u != str::char_len(i); }
-            none::<str>    { assert false; }
+          some::<str>(i) { assert 0u != str::char_len(i); }
+          none::<str>    { assert false; }
         }
     }
 
