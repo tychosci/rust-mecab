@@ -91,7 +91,7 @@ fn example_mecab_node() {
             n.bump();
         }
       }
-      node::<mecab::mecab_node> {
+      none::<mecab::mecab_node> {
         fail #fmt["Exception: %s", m.strerror()];
       }
     }
