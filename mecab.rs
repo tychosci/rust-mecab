@@ -184,6 +184,8 @@ iface mecab_dictionary_info {
 
     fn is_end() -> bool;
 
+    fn iter(blk: fn(mecab_dictionary_info));
+
     fn get_filename() -> str;
     fn get_charset()  -> str;
 
@@ -201,6 +203,8 @@ impl of mecab_dictionary_info for *mecab_dictionary_info_t {
     fn is_end() -> bool unsafe {
         self == ptr::null()
     }
+
+    fn iter(_blk: fn(mecab_dictionary_info)) { }
 
     fn get_filename() -> str unsafe {
         let buf = (*self).filename;
@@ -228,6 +232,13 @@ impl of mecab_dictionary_info for {mutable base: *mecab_dictionary_info_t} {
 
     fn is_end() -> bool { self.base.is_end() }
 
+    fn iter(blk: fn(mecab_dictionary_info)) {
+        while !self.is_end() {
+            blk(self as mecab_dictionary_info);
+            self.bump();
+        }
+    }
+
     fn get_filename() -> str unsafe { self.base.get_filename() }
 
     fn get_charset()  -> str unsafe { self.base.get_charset() }
@@ -252,7 +263,7 @@ iface mecab_node {
 
     fn is_end() -> bool;
 
-    fn iter(blk: fn&(mecab_node));
+    fn iter(blk: fn(mecab_node));
 
     fn get_surface() -> str;
     fn get_feature() -> str;
@@ -266,7 +277,7 @@ impl of mecab_node for *mecab_node_t {
 
     fn is_end() -> bool unsafe { self == ptr::null() }
 
-    fn iter(_blk: fn&(mecab_node)) { }
+    fn iter(_blk: fn(mecab_node)) { }
 
     fn get_surface() -> str unsafe {
         let buf = (*self).surface;
@@ -297,7 +308,7 @@ impl of mecab_node for {mutable base: *mecab_node_t} {
     fn is_end() -> bool { self.base.is_end() }
 
 
-    fn iter(blk: fn&(mecab_node)) {
+    fn iter(blk: fn(mecab_node)) {
         while !self.is_end() {
             blk(self as mecab_node);
             self.bump();

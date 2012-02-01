@@ -112,15 +112,14 @@ fn example_mecab_dict() {
       none::<mecab::mecab_dictionary_info>        { fail; }
     };
 
-    while !dict.is_end() {
-        std::io::print(#fmt["filename: %s\n", dict.get_filename()]);
-        std::io::print(#fmt["charset:  %s\n", dict.get_charset()]);
-        std::io::print(#fmt["size:     %u\n", dict.get_size()]);
-        std::io::print(#fmt["type:     %d\n", dict.get_type()]);
-        std::io::print(#fmt["lsize:    %u\n", dict.get_lsize()]);
-        std::io::print(#fmt["rsize:    %u\n", dict.get_rsize()]);
-        std::io::print(#fmt["version:  %u\n", dict.get_version()]);
-        dict.bump();
+    dict.iter { |d|
+        std::io::print(#fmt["filename: %s\n", d.get_filename()]);
+        std::io::print(#fmt["charset:  %s\n", d.get_charset()]);
+        std::io::print(#fmt["size:     %u\n", d.get_size()]);
+        std::io::print(#fmt["type:     %d\n", d.get_type()]);
+        std::io::print(#fmt["lsize:    %u\n", d.get_lsize()]);
+        std::io::print(#fmt["rsize:    %u\n", d.get_rsize()]);
+        std::io::print(#fmt["version:  %u\n", d.get_version()]);
     }
 }
 
