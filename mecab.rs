@@ -196,8 +196,7 @@ iface mecab_dictionary_info {
 
 impl of mecab_dictionary_info for *mecab_dictionary_info_t {
 
-    fn bump() unsafe {
-    }
+    fn bump() unsafe { }
 
     fn is_end() -> bool unsafe {
         self == ptr::null()
@@ -253,6 +252,8 @@ iface mecab_node {
 
     fn is_end() -> bool;
 
+    fn iter(blk: fn&(mecab_node));
+
     fn get_surface() -> str;
     fn get_feature() -> str;
 
@@ -264,6 +265,8 @@ impl of mecab_node for *mecab_node_t {
     fn bump() unsafe { }
 
     fn is_end() -> bool unsafe { self == ptr::null() }
+
+    fn iter(_blk: fn&(mecab_node)) { }
 
     fn get_surface() -> str unsafe {
         let buf = (*self).surface;
@@ -292,6 +295,14 @@ impl of mecab_node for {mutable base: *mecab_node_t} {
     }
 
     fn is_end() -> bool { self.base.is_end() }
+
+
+    fn iter(blk: fn&(mecab_node)) {
+        while !self.is_end() {
+            blk(self as mecab_node);
+            self.bump();
+        }
+    }
 
     fn get_surface() -> str unsafe {
         self.base.get_surface()
@@ -535,6 +546,26 @@ mod tests {
         alt r {
           some::<str>(i) { assert 0u != str::char_len(i); }
           none::<str>    { assert false; }
+        }
+    }
+
+    #[test]
+    fn test_mecab_node_iter() {
+        let m = alt mecab_new2("") {
+          some::<mecab>(_m) { _m }
+          none::<mecab>     { fail; }
+        };
+        let s = "もももすももももものうち";
+        let r = m.sparse_tonode(s);
+
+        alt r {
+          some::<mecab_node>(node) {
+            node.iter { |_n| }
+            assert true;
+          }
+          none::<mecab_node> {
+            assert false;
+          }
         }
     }
 

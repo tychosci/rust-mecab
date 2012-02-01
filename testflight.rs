@@ -160,6 +160,40 @@ fn example_katakanize() {
     }
 }
 
+fn example_hinsi() {
+    let m = alt mecab::mecab_new2("") {
+      some::<mecab::mecab>(_m) { _m }
+      none::<mecab::mecab>     { fail; }
+    };
+
+    test_pass_mecab(m);
+
+    std::io::println("-----------------------------------------");
+    std::io::println("[hinsi]");
+
+    let input = "今日はやけに冷えるなあ";
+    std::io::print(#fmt["input: %s\n", input]);
+
+    let node = m.sparse_tonode(input);
+
+    alt node {
+      some::<mecab::mecab_node>(node0) {
+        node0.iter { |n|
+            let stat = n.get_status();
+            if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+                let feature = n.get_feature();
+                let feature0 = str::split_str(feature, ",");
+                let (a, b) = (feature0[0], feature0[6]);
+                std::io::println(#fmt[" -> %s(%s)", b, a]);
+            }
+        }
+      }
+      none::<mecab::mecab_node> {
+        fail #fmt["Exception: %s", m.strerror()];
+      }
+    }
+}
+
 fn main(args: [str]) {
     std::io::print(#fmt["version: %s\n", mecab::mecab_version()]);
     alt task::try {||
@@ -168,6 +202,7 @@ fn main(args: [str]) {
         example_mecab_node();
         example_mecab_dict();
         example_katakanize();
+        example_hinsi();
     } {
         result::ok(())  { /* do nothing */ }
         result::err(()) { sys::set_exit_status(1); }
