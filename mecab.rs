@@ -21,49 +21,49 @@ export mecab_dictionary_info;
 export MECAB_NOR_NODE, MECAB_UNK_NODE;
 export MECAB_BOS_NODE, MECAB_EOS_NODE, MECAB_EON_NODE;
 
+// dummy enums for recursive structures and opaque pointers
+enum _mecab_t { }
+enum _mecab_node_t { }
+enum _mecab_path_t { }
+enum _mecab_dictionary_info_t { }
+
 #[link_name = "mecab"]
 #[abi = "cdecl"]
 native mod _mecab {
 
-    // FIXME: add more types that needed to use in this binding.
-    type mecab_t;
-    type mecab_node_t;
-    type mecab_path_t;
-    type mecab_dictionary_info_t;
-
     // FIXME: add more functions.
     fn mecab_new(argc: ctypes::c_int, argv: **u8)
-        -> *mecab_t;
+        -> *::_mecab_t;
 
     fn mecab_new2(arg: *u8)
-        -> *mecab_t;
+        -> *::_mecab_t;
 
-    fn mecab_destroy(mecab: *mecab_t);
+    fn mecab_destroy(mecab: *::_mecab_t);
 
-    fn mecab_strerror(mecab: *mecab_t)
+    fn mecab_strerror(mecab: *::_mecab_t)
         -> *u8;
 
     fn mecab_do(argc: ctypes::c_int, argv: **u8)
         -> ctypes::c_int;
 
-    fn mecab_sparse_tostr(mecab: *mecab_t, input: *u8)
+    fn mecab_sparse_tostr(mecab: *::_mecab_t, input: *u8)
         -> *u8;
 
-    fn mecab_sparse_tostr2(mecab: *mecab_t,
+    fn mecab_sparse_tostr2(mecab: *::_mecab_t,
                            input: *u8,
                            len:   ctypes::size_t)
         -> *u8;
 
-    fn mecab_sparse_tonode(mecab: *mecab_t,
+    fn mecab_sparse_tonode(mecab: *::_mecab_t,
                            input: *u8)
         -> *::mecab_node_t;
 
-    fn mecab_sparse_tonode2(mecab: *mecab_t,
+    fn mecab_sparse_tonode2(mecab: *::_mecab_t,
                             input: *u8,
                             len:   ctypes::size_t)
         -> *::mecab_node_t;
 
-    fn mecab_dictionary_info(mecab: *mecab_t)
+    fn mecab_dictionary_info(mecab: *::_mecab_t)
         -> *::mecab_dictionary_info_t;
 
     fn mecab_version() -> *u8;
@@ -79,12 +79,12 @@ http://mecab.sourceforge.net/doxygen/structmecab__node__t.html
 
 */
 type mecab_node_t =
-    { prev:     *_mecab::mecab_node_t
-    , next:     *_mecab::mecab_node_t
-    , enext:    *_mecab::mecab_node_t
-    , bnext:    *_mecab::mecab_node_t
-    , rpath:    *_mecab::mecab_path_t
-    , lpath:    *_mecab::mecab_path_t
+    { prev:     *_mecab_node_t
+    , next:     *_mecab_node_t
+    , enext:    *_mecab_node_t
+    , bnext:    *_mecab_node_t
+    , rpath:    *_mecab_path_t
+    , lpath:    *_mecab_path_t
     , surface:   *u8
     , feature:   *u8
     , id:        ctypes::c_uint
@@ -119,7 +119,7 @@ type mecab_dictionary_info_t =
     , lsize:    ctypes::c_uint
     , rsize:    ctypes::c_uint
     , version:  u16
-    , next:    *_mecab::mecab_dictionary_info_t
+    , next:    *_mecab_dictionary_info_t
     };
 
 /*
@@ -287,7 +287,7 @@ impl of mecab_node for *mecab_node_t {
 
         check uint::le(begin, end);
 
-        str::safe_slice(s, begin, end)
+        str::slice(s, begin, end)
     }
 
     fn get_feature() -> str unsafe {
@@ -346,7 +346,7 @@ iface mecab {
     fn get_dictionary_info() -> option<mecab_dictionary_info>;
 }
 
-impl of mecab for *_mecab::mecab_t {
+impl of mecab for *_mecab_t {
 
     fn strerror() -> str unsafe {
         let res = _mecab::mecab_strerror(self);
@@ -442,7 +442,7 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
 
 }
 
-resource wrapped_mecab(m: *_mecab::mecab_t) {
+resource wrapped_mecab(m: *_mecab_t) {
     _mecab::mecab_destroy(m);
 }
 
