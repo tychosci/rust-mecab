@@ -23,7 +23,6 @@ See [testflight.rs](https://github.com/tychosci/rust-mecab/blob/master/testfligh
  TODO
 ------
 
-- implement N-best methods
 - `mecab_model_t`
 
  License
