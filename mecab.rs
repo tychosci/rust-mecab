@@ -287,7 +287,7 @@ impl of mecab_node for *mecab_node_t {
 
         check uint::le(begin, end);
 
-        str::slice(s, begin, end)
+        str::substr(s, begin, end)
     }
 
     fn get_feature() -> str unsafe {
