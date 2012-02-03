@@ -54,6 +54,18 @@ native mod _mecab {
                            len:   ctypes::size_t)
         -> *u8;
 
+    fn mecab_nbest_sparse_tostr(mecab: *::_mecab_t,
+                                n:     ctypes::size_t,
+                                input: *u8)
+        -> *u8;
+
+    fn mecab_nbest_sparse_tostr2(mecab: *::_mecab_t,
+                                 n:     ctypes::size_t,
+                                 input: *u8,
+                                 len:   ctypes::size_t)
+        -> *u8;
+
+
     fn mecab_sparse_tonode(mecab: *::_mecab_t,
                            input: *u8)
         -> *::mecab_node_t;
@@ -62,6 +74,22 @@ native mod _mecab {
                             input: *u8,
                             len:   ctypes::size_t)
         -> *::mecab_node_t;
+
+    fn mecab_nbest_init(mecab: *::_mecab_t,
+                        input: *u8)
+        -> ctypes::c_int;
+
+    fn mecab_nbest_init2(mecab: *::_mecab_t,
+                         input: *u8,
+                         len:   ctypes::size_t)
+        -> ctypes::c_int;
+
+    fn mecab_nbest_next_tostr(mecab: *::_mecab_t)
+        -> *u8;
+
+    fn mecab_nbest_next_tostr2(mecab: *::_mecab_t,
+                               len:   ctypes::size_t)
+        -> *u8;
 
     fn mecab_dictionary_info(mecab: *::_mecab_t)
         -> *::mecab_dictionary_info_t;
@@ -337,11 +365,22 @@ FIXME: write
 iface mecab {
     fn strerror() -> str;
 
-    fn sparse_tostr(input: str)   -> option<str>;
-    fn sparse_tostr2(input: str, len: uint)  -> option<str>;
+    fn sparse_tostr(input: str) -> option<str>;
+    fn sparse_tostr2(input: str, len: uint) -> option<str>;
 
-    fn sparse_tonode(input: str)  -> option<mecab_node>;
+    fn nbest_sparse_tostr(n: uint, input: str) -> option<str>;
+    fn nbest_sparse_tostr2(n: uint, input: str, len: uint) -> option<str>;
+
+    fn sparse_tonode(input: str) -> option<mecab_node>;
     fn sparse_tonode2(input: str, len: uint) -> option<mecab_node>;
+
+    fn nbest_init(input: str) -> bool;
+    fn nbest_init2(input: str, len: uint) -> bool;
+
+    fn nbest_next_tostr() -> option<str>;
+    fn nbest_next_tostr2(len: uint) -> option<str>;
+
+    fn nbest_upto(to: uint, blk: fn(mecab));
 
     fn get_dictionary_info() -> option<mecab_dictionary_info>;
 }
@@ -378,6 +417,34 @@ impl of mecab for *_mecab_t {
         }
     }
 
+    fn nbest_sparse_tostr(n: uint, input: str) -> option<str> unsafe {
+        let n = n as ctypes::size_t;
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_nbest_sparse_tostr(self, n, buf)
+        };
+
+        if res == ptr::null() {
+            none::<str>
+        } else {
+            some::<str>(str::from_cstr(res))
+        }
+    }
+
+    fn nbest_sparse_tostr2(n: uint, input: str, len: uint)
+        -> option<str> unsafe {
+        let n = n as ctypes::size_t;
+        let len = len as ctypes::size_t;
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_nbest_sparse_tostr2(self, n, buf, len)
+        };
+
+        if res == ptr::null() {
+            none::<str>
+        } else {
+            some::<str>(str::from_cstr(res))
+        }
+    }
+
     fn sparse_tonode(input: str) -> option<mecab_node> unsafe {
         let res = str::as_buf(input) { |buf|
             _mecab::mecab_sparse_tonode(self, buf)
@@ -400,6 +467,52 @@ impl of mecab for *_mecab_t {
             none::<mecab_node>
         } else {
             some::<mecab_node>({mutable base: res} as mecab_node)
+        }
+    }
+
+    fn nbest_init(input: str) -> bool unsafe {
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_nbest_init(self, buf)
+        };
+
+        res as int != 0
+    }
+
+    fn nbest_init2(input: str, len: uint) -> bool unsafe {
+        let len = len as ctypes::size_t;
+        let res = str::as_buf(input) { |buf|
+            _mecab::mecab_nbest_init2(self, buf, len)
+        };
+
+        res as int != 0
+    }
+
+    fn nbest_next_tostr() -> option<str> unsafe {
+        let res = _mecab::mecab_nbest_next_tostr(self);
+
+        if res == ptr::null() {
+            none::<str>
+        } else {
+            some::<str>(str::from_cstr(res))
+        }
+    }
+
+    fn nbest_next_tostr2(len: uint) -> option<str> unsafe {
+        let len = len as ctypes::size_t;
+        let res = _mecab::mecab_nbest_next_tostr2(self, len);
+
+        if res == ptr::null() {
+            none::<str>
+        } else {
+            some::<str>(str::from_cstr(res))
+        }
+    }
+
+    fn nbest_upto(to: uint, blk: fn(mecab)) {
+        let to = to;
+        while to > 0u {
+            blk(self as mecab);
+            to -= 1u;
         }
     }
 
@@ -428,12 +541,40 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
         self.base.sparse_tostr2(input, len)
     }
 
+    fn nbest_sparse_tostr(n: uint, input: str) -> option<str> {
+        self.base.nbest_sparse_tostr(n, input)
+    }
+
+    fn nbest_sparse_tostr2(n: uint, input: str, len: uint) -> option<str> {
+        self.base.nbest_sparse_tostr2(n, input, len)
+    }
+
     fn sparse_tonode(input: str) -> option<mecab_node> {
         self.base.sparse_tonode(input)
     }
 
     fn sparse_tonode2(input: str, len: uint) -> option<mecab_node> {
         self.base.sparse_tonode2(input, len)
+    }
+
+    fn nbest_init(input: str) -> bool {
+        self.base.nbest_init(input)
+    }
+
+    fn nbest_init2(input: str, len: uint) -> bool {
+        self.base.nbest_init2(input, len)
+    }
+
+    fn nbest_next_tostr() -> option<str> {
+        self.base.nbest_next_tostr()
+    }
+
+    fn nbest_next_tostr2(len: uint) -> option<str> {
+        self.base.nbest_next_tostr2(len)
+    }
+
+    fn nbest_upto(to: uint, blk: fn(mecab)) {
+        self.base.nbest_upto(to, blk);
     }
 
     fn get_dictionary_info() -> option<mecab_dictionary_info> {
