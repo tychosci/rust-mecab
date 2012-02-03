@@ -76,25 +76,23 @@ fn example_mecab_node() {
     println("-----------------------------------------");
 
     let input = "みなさんのおかげでチョー助かってます(>_<;)";
-
-    let node = m.sparse_tonode(input);
     print(#fmt["input: %s\n", input]);
 
-    alt node {
-      some::<mecab::mecab_node>(n) {
-        print("output:\n");
-        while !n.is_end() {
-            let stat = n.get_status();
-            if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
-                print(#fmt["%s", n.get_surface()]);
-                print(#fmt["\t%s\n", n.get_feature()]);
-            }
-            n.bump();
-        }
-      }
+    let node = alt m.sparse_tonode(input) {
+      some::<mecab::mecab_node>(n) { n }
       none::<mecab::mecab_node> {
         fail #fmt["Exception: %s", m.strerror()];
       }
+    };
+
+    print("output:\n");
+
+    node.iter { |n|
+        let stat = n.get_status();
+        if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+            print(#fmt["%s", n.get_surface()]);
+            print(#fmt["\t%s\n", n.get_feature()]);
+        }
     }
 }
 
@@ -138,26 +136,25 @@ fn example_katakanize() {
     let input = "我々は宇宙人だ";
     print(#fmt["from: %s\n", input]);
 
-    let node = m.sparse_tonode(input);
-
-    alt node {
-      some::<mecab::mecab_node>(n) {
-        print("to:   ");
-        while !n.is_end() {
-            let stat = n.get_status();
-            if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
-                let feature = n.get_feature();
-                let kana = str::split_str(feature, ",")[7];
-                print(#fmt["%s", kana]);
-            }
-            n.bump();
-        }
-        print("\n");
-      }
+    let node = alt m.sparse_tonode(input) {
+      some::<mecab::mecab_node>(n) { n }
       none::<mecab::mecab_node> {
         fail #fmt["Exception: %s", m.strerror()];
       }
+    };
+
+    print("to:   ");
+
+    node.iter { |n|
+        let stat = n.get_status();
+        if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+            let feature = n.get_feature();
+            let kana = str::split_str(feature, ",")[7];
+            print(#fmt["%s", kana]);
+        }
     }
+
+    print("\n");
 }
 
 fn example_hinsi() {
@@ -174,23 +171,21 @@ fn example_hinsi() {
     let input = "今日はやけに冷えるなあ";
     print(#fmt["input: %s\n", input]);
 
-    let node = m.sparse_tonode(input);
-
-    alt node {
-      some::<mecab::mecab_node>(node0) {
-        node0.iter { |n|
-            let stat = n.get_status();
-            if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
-                let feature = n.get_feature();
-                let feature0 = str::split_str(feature, ",");
-                let (a, b) = (feature0[0], feature0[6]);
-                println(#fmt[" -> %s(%s)", b, a]);
-            }
-        }
-      }
+    let node = alt m.sparse_tonode(input) {
+      some::<mecab::mecab_node>(n) { n }
       none::<mecab::mecab_node> {
         fail #fmt["Exception: %s", m.strerror()];
       }
+    };
+
+    node.iter { |n|
+        let stat = n.get_status();
+        if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
+            let feature = n.get_feature();
+            let feature0 = str::split_str(feature, ",");
+            let (a, b) = (feature0[0], feature0[6]);
+            println(#fmt[" -> %s(%s)", b, a]);
+        }
     }
 }
 
