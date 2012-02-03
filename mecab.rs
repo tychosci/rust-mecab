@@ -453,8 +453,8 @@ Function: mecab_new
 the wrapper of `_mecab::mecab_new` that returns wrapped structure `mecab`
 
 */
-fn mecab_new(argc: uint, args: [str]) -> option<mecab> unsafe {
-    let argc = argc as ctypes::c_int;
+fn mecab_new(args: [str]) -> option<mecab> unsafe {
+    let argc = vec::len(args) as ctypes::c_int;
 
     let argv = [];
     for arg in args {
@@ -497,8 +497,8 @@ Function: mecab_do
 the wrapper of `_mecab::mecab_do` that returns status code at termination
 
 */
-fn mecab_do(argc: uint, args: [str]) -> int unsafe {
-    let argc = argc as ctypes::c_int;
+fn mecab_do(args: [str]) -> int unsafe {
+    let argc = vec::len(args) as ctypes::c_int;
 
     let argv = [];
     for arg in args {
