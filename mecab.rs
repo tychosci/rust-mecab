@@ -65,9 +65,7 @@ native mod _mecab {
                                  len:   ctypes::size_t)
         -> *u8;
 
-
-    fn mecab_sparse_tonode(mecab: *::_mecab_t,
-                           input: *u8)
+    fn mecab_sparse_tonode(mecab: *::_mecab_t, input: *u8)
         -> *::mecab_node_t;
 
     fn mecab_sparse_tonode2(mecab: *::_mecab_t,
@@ -75,8 +73,7 @@ native mod _mecab {
                             len:   ctypes::size_t)
         -> *::mecab_node_t;
 
-    fn mecab_nbest_init(mecab: *::_mecab_t,
-                        input: *u8)
+    fn mecab_nbest_init(mecab: *::_mecab_t, input: *u8)
         -> ctypes::c_int;
 
     fn mecab_nbest_init2(mecab: *::_mecab_t,
@@ -87,8 +84,7 @@ native mod _mecab {
     fn mecab_nbest_next_tostr(mecab: *::_mecab_t)
         -> *u8;
 
-    fn mecab_nbest_next_tostr2(mecab: *::_mecab_t,
-                               len:   ctypes::size_t)
+    fn mecab_nbest_next_tostr2(mecab: *::_mecab_t, len: ctypes::size_t)
         -> *u8;
 
     fn mecab_dictionary_info(mecab: *::_mecab_t)
@@ -107,12 +103,12 @@ http://mecab.sourceforge.net/doxygen/structmecab__node__t.html
 
 */
 type mecab_node_t =
-    { prev:     *_mecab_node_t
-    , next:     *_mecab_node_t
-    , enext:    *_mecab_node_t
-    , bnext:    *_mecab_node_t
-    , rpath:    *_mecab_path_t
-    , lpath:    *_mecab_path_t
+    { prev:      *_mecab_node_t
+    , next:      *_mecab_node_t
+    , enext:     *_mecab_node_t
+    , bnext:     *_mecab_node_t
+    , rpath:     *_mecab_path_t
+    , lpath:     *_mecab_path_t
     , surface:   *u8
     , feature:   *u8
     , id:        ctypes::c_uint
@@ -147,7 +143,7 @@ type mecab_dictionary_info_t =
     , lsize:    ctypes::c_uint
     , rsize:    ctypes::c_uint
     , version:  u16
-    , next:    *_mecab_dictionary_info_t
+    , next:     *_mecab_dictionary_info_t
     };
 
 /*
@@ -228,9 +224,7 @@ impl of mecab_dictionary_info for *mecab_dictionary_info_t {
 
     fn bump() unsafe { }
 
-    fn is_end() -> bool unsafe {
-        self == ptr::null()
-    }
+    fn is_end() -> bool unsafe { self == ptr::null() }
 
     fn iter(_blk: fn(mecab_dictionary_info)) { }
 
@@ -351,7 +345,9 @@ impl of mecab_node for {mutable base: *mecab_node_t} {
         self.base.get_feature()
     }
 
-    fn get_status() -> u8 unsafe { self.base.get_status() }
+    fn get_status() -> u8 unsafe {
+        self.base.get_status()
+    }
 
 }
 
