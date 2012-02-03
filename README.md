@@ -24,6 +24,7 @@ See [testflight.rs](https://github.com/tychosci/rust-mecab/blob/master/testfligh
 ------
 
 - `mecab_model_t`
+- `mecab_lattice_t`
 
  License
 ---------
