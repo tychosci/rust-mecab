@@ -307,9 +307,9 @@ impl of mecab_node for *mecab_node_t {
         let end = (*self).length as uint;
         let s = str::from_cstr(buf);
 
-        check uint::le(begin, end);
+        // check uint::le(begin, end);
 
-        str::substr(s, begin, end)
+        str::unsafe::slice_bytes(s, begin, end)
     }
 
     fn get_feature() -> str unsafe {
