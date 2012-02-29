@@ -62,7 +62,7 @@ fn example_singlethread() {
 fn example_singlethread_use2() {
     example_do("singlethread_use2") { |m|
         let input = "抵抗は無意味だ";
-        let output = m.sparse_tostr2(input, str::byte_len(input));
+        let output = m.sparse_tostr2(input, str::len(input));
 
         alt output {
           some::<str>(s) {
