@@ -11,7 +11,7 @@ test:
 use std;
 use mecab;
 
-import std::io::{print, println};
+import io::{print, println};
 import mecab::{MECAB_UNK_NODE, MECAB_NOR_NODE};
 
 fn test_pass_mecab(_mecab: mecab::mecab) {
