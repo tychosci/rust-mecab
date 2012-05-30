@@ -256,6 +256,7 @@ impl of mecab_dictionary_info for {mut base: *mecab_dictionary_info_t} {
 
     fn iter(blk: fn(mecab_dictionary_info)) {
         while !self.is_end() {
+            // FIXME figure out how to avoid unnecessary copying
             blk(self as mecab_dictionary_info);
             self.bump();
         }
@@ -332,6 +333,7 @@ impl of mecab_node for {mut base: *mecab_node_t} {
 
     fn iter(blk: fn(mecab_node)) {
         while !self.is_end() {
+            // FIXME figure out how to avoid unnecessary copying
             blk(self as mecab_node);
             self.bump();
         }
@@ -594,7 +596,7 @@ fn mecab_new(args: [str]) -> option<mecab> unsafe {
     let argc = vec::len(args) as libc::c_int;
 
     let mut argv = [];
-    for arg in args {
+    for vec::each(args) {|arg|
         argv += str::as_buf(arg) { |buf| [buf] };
     }
     argv += [ptr::null()];
@@ -638,7 +640,7 @@ fn mecab_do(args: [str]) -> int unsafe {
     let argc = vec::len(args) as libc::c_int;
 
     let mut argv = [];
-    for arg in args {
+    for vec::each(args) {|arg|
         argv += str::as_buf(arg) { |buf| [buf] };
     }
     argv += [ptr::null()];

@@ -201,6 +201,6 @@ fn main() {
         example_nbest_iter();
     } {
         result::ok(())  { /* do nothing */ }
-        result::err(()) { sys::set_exit_status(1); }
+        result::err(()) { os::set_exit_status(1); }
     }
 }
