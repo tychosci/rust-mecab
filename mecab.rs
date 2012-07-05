@@ -526,7 +526,7 @@ mod tests {
 
 #[link_name = "mecab"]
 #[abi = "cdecl"]
-native mod _mecab {
+extern mod _mecab {
     fn mecab_new(argc: libc::c_int, argv: **u8) -> *::_mecab_t;
     fn mecab_new2(arg: *libc::c_char) -> *::_mecab_t;
     fn mecab_destroy(mecab: *::_mecab_t);
