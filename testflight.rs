@@ -19,8 +19,8 @@ fn test_pass_mecab(_mecab: mecab::mecab) {
 
 fn example_do(title: str, blk: fn(mecab::mecab)) {
     let m = alt mecab::mecab_new2("") {
-      some::<mecab::mecab>(_m) { _m }
-      none::<mecab::mecab>     { fail; }
+        some::<mecab::mecab>(_m) { _m }
+        none::<mecab::mecab>     { fail; }
     };
 
     test_pass_mecab(m);
@@ -34,7 +34,7 @@ fn example_do(title: str, blk: fn(mecab::mecab)) {
 }
 
 fn example_singlethread() {
-    example_do("singlethread") { |m|
+    do example_do("singlethread") |m| {
         let input = "あなたの家から、あの森まで";
 
         alt m.sparse_tostr(input) {
@@ -60,7 +60,7 @@ fn example_singlethread() {
 }
 
 fn example_singlethread_use2() {
-    example_do("singlethread_use2") { |m|
+    do example_do("singlethread_use2") |m| {
         let input = "抵抗は無意味だ";
         let output = m.sparse_tostr2(input, str::len(input));
 
@@ -77,7 +77,7 @@ fn example_singlethread_use2() {
 }
 
 fn example_mecab_node() {
-    example_do("mecab_node") { |m|
+    do example_do("mecab_node") |m| {
         let input = "みなさんのおかげでチョー助かってます(>_<;)";
         print(#fmt["input: %s\n", input]);
 
@@ -90,7 +90,7 @@ fn example_mecab_node() {
 
         print("output:\n");
 
-        node.iter { |n|
+        do node.iter |n| {
             let stat = n.get_status();
             if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
                 print(#fmt["%s", n.get_surface()]);
@@ -101,13 +101,13 @@ fn example_mecab_node() {
 }
 
 fn example_mecab_dict() {
-    example_do("mecab_dict") { |m|
+    do example_do("mecab_dict") |m| {
         let dict = alt m.get_dictionary_info() {
           some::<mecab::mecab_dictionary_info>(_dict) { _dict }
           none::<mecab::mecab_dictionary_info>        { fail; }
         };
 
-        dict.iter { |d|
+        do dict.iter |d| {
             print(#fmt["filename: %s\n", d.get_filename()]);
             print(#fmt["charset:  %s\n", d.get_charset()]);
             print(#fmt["size:     %u\n", d.get_size()]);
@@ -120,7 +120,7 @@ fn example_mecab_dict() {
 }
 
 fn example_katakanize() {
-    example_do("katakanize") { |m|
+    do example_do("katakanize") |m| {
         let input = "我々は宇宙人だ";
         print(#fmt["from: %s\n", input]);
 
@@ -133,11 +133,11 @@ fn example_katakanize() {
 
         print("to:   ");
 
-        node.iter { |n|
+        do node.iter |n| {
             let stat = n.get_status();
             if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
                 let feature = n.get_feature();
-                let kana = str::split_str(feature, ",")[7];
+                let kana = copy str::split_str(feature, ",")[7];
                 print(#fmt["%s", kana]);
             }
         }
@@ -147,7 +147,7 @@ fn example_katakanize() {
 }
 
 fn example_hinsi() {
-    example_do("hinsi") { |m|
+    do example_do("hinsi") |m| {
         let input = "今日はやけに冷えるなあ";
         print(#fmt["input: %s\n", input]);
 
@@ -158,11 +158,11 @@ fn example_hinsi() {
           }
         };
 
-        node.iter { |n|
+        do node.iter |n| {
             let stat = n.get_status();
             if stat == MECAB_NOR_NODE || stat == MECAB_UNK_NODE {
                 let feature = n.get_feature();
-                let feature0 = str::split_str(feature, ",");
+                let feature0 = copy str::split_str(feature, ",");
                 let (a, b) = (feature0[0], feature0[6]);
                 println(#fmt[" -> %s(%s)", b, a]);
             }
@@ -171,7 +171,7 @@ fn example_hinsi() {
 }
 
 fn example_nbest_iter() {
-    example_do("nbest_iter") { |m|
+    do example_do("nbest_iter") |m| {
         let input = "すもももももももものうち";
         print(#fmt["input: %s\n", input]);
 
@@ -179,7 +179,7 @@ fn example_nbest_iter() {
             fail #fmt["Exception: %s", m.strerror()];
         }
 
-        m.nbest_upto(3u) { |m0|
+        do m.nbest_upto(3u) |m0| {
             let s = alt m0.nbest_next_tostr() {
                 some::<str>(_s) { _s }
                 none::<str>     { fail; }
@@ -191,7 +191,7 @@ fn example_nbest_iter() {
 
 fn main() {
     print(#fmt["version: %s\n", mecab::mecab_version()]);
-    alt task::try {||
+    alt do task::try {
         example_singlethread();
         example_singlethread_use2();
         example_mecab_node();

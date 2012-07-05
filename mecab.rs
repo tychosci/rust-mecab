@@ -15,20 +15,18 @@ export mecab_dictionary_info;
 export MECAB_NOR_NODE, MECAB_UNK_NODE;
 export MECAB_BOS_NODE, MECAB_EOS_NODE, MECAB_EON_NODE;
 
-enum _mecab_t = ();
-enum _mecab_node_t = ();
-enum _mecab_path_t = ();
-enum _mecab_dictionary_info_t = ();
+enum mecab_t = ();
+enum mecab_path_t = ();
 
 #[doc = "same structure of `_mecab::mecab_node_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>"]
-type mecab_node_t =
-    { prev:      *_mecab_node_t
-    , next:      *_mecab_node_t
-    , enext:     *_mecab_node_t
-    , bnext:     *_mecab_node_t
-    , rpath:     *_mecab_path_t
-    , lpath:     *_mecab_path_t
+enum mecab_node_t =
+    { prev:      *mecab_node_t
+    , next:      *mecab_node_t
+    , enext:     *mecab_node_t
+    , bnext:     *mecab_node_t
+    , rpath:     *mecab_path_t
+    , lpath:     *mecab_path_t
     , surface:   *libc::c_char
     , feature:   *libc::c_char
     , id:         libc::c_uint
@@ -49,7 +47,7 @@ type mecab_node_t =
 
 #[doc = "same structure of `_mecab::mecab_dictionary_info_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>"]
-type mecab_dictionary_info_t =
+enum mecab_dictionary_info_t =
     { filename: *libc::c_char
     , charset:  *libc::c_char
     , size:      libc::c_uint
@@ -57,7 +55,7 @@ type mecab_dictionary_info_t =
     , lsize:     libc::c_uint
     , rsize:     libc::c_uint
     , version:   u16
-    , next:     *_mecab_dictionary_info_t
+    , next:     *mecab_dictionary_info_t
     };
 
 #[doc = "Parameters for `mecab_node_t.stat`
@@ -206,7 +204,7 @@ iface mecab {
     fn get_dictionary_info() -> option<mecab_dictionary_info>;
 }
 
-impl of mecab for *_mecab_t {
+impl of mecab for *mecab_t {
     fn strerror() -> str {
         unsafe {
             let res = _mecab::mecab_strerror(self);
@@ -215,7 +213,7 @@ impl of mecab for *_mecab_t {
     }
     fn sparse_tostr(input: str) -> option<str> {
         unsafe {
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input)  |buf| {
                 _mecab::mecab_sparse_tostr(self, buf)
             };
 
@@ -229,7 +227,7 @@ impl of mecab for *_mecab_t {
     fn sparse_tostr2(input: str, len: uint) -> option<str> {
         unsafe {
             let len = len as libc::size_t;
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_sparse_tostr2(self, buf, len)
             };
 
@@ -243,7 +241,7 @@ impl of mecab for *_mecab_t {
     fn nbest_sparse_tostr(n: uint, input: str) -> option<str> {
         unsafe {
             let n = n as libc::size_t;
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_nbest_sparse_tostr(self, n, buf)
             };
 
@@ -258,7 +256,7 @@ impl of mecab for *_mecab_t {
         unsafe {
             let n = n as libc::size_t;
             let len = len as libc::size_t;
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_nbest_sparse_tostr2(self, n, buf, len)
             };
 
@@ -271,7 +269,7 @@ impl of mecab for *_mecab_t {
     }
     fn sparse_tonode(input: str) -> option<mecab_node> {
         unsafe {
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_sparse_tonode(self, buf)
             };
 
@@ -285,7 +283,7 @@ impl of mecab for *_mecab_t {
     fn sparse_tonode2(input: str, len: uint) -> option<mecab_node> {
         unsafe {
             let len = len as libc::size_t;
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_sparse_tonode2(self, buf, len)
             };
 
@@ -298,7 +296,7 @@ impl of mecab for *_mecab_t {
     }
     fn nbest_init(input: str) -> bool {
         unsafe {
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_nbest_init(self, buf)
             };
 
@@ -308,7 +306,7 @@ impl of mecab for *_mecab_t {
     fn nbest_init2(input: str, len: uint) -> bool {
         unsafe {
             let len = len as libc::size_t;
-            let res = str::as_buf(input) { |buf|
+            let res = do str::as_buf(input) |buf| {
                 _mecab::mecab_nbest_init2(self, buf, len)
             };
 
@@ -397,25 +395,26 @@ impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
     }
 }
 
-// TODO Use `class` with dtor instead of this deprecated one
-resource wrapped_mecab(m: *_mecab_t) {
-    _mecab::mecab_destroy(m);
+class wrapped_mecab {
+    let m: *mecab_t;
+    new(m: *mecab_t) { self.m = m; }
+    drop { _mecab::mecab_destroy(self.m); }
 }
 
-fn mecab_new(args: [str]) -> option<mecab> {
+fn mecab_new(args: &[str]) -> option<mecab> {
     #[doc = "the wrapper of `_mecab::mecab_new`
     that returns wrapped structure `mecab`"];
 
     let argc = vec::len(args) as libc::c_int;
 
     unsafe {
-        let mut argv = [];
-        for vec::each(args) {|arg|
-            // FIXME use vec::push instead of +=
-            argv += str::as_buf(arg) { |buf| [buf] };
+        let mut argv = ~[];
+        for vec::each(args) |arg| {
+            do str::as_buf(arg) |buf| {
+                vec::push(argv, buf);
+            }
         }
-        // FIXME Use vec::push instead of +=
-        argv += [ptr::null()];
+        vec::push(argv, ptr::null());
 
         let m = _mecab::mecab_new(argc, vec::unsafe::to_ptr(argv));
 
@@ -432,7 +431,7 @@ fn mecab_new2(arg: str) -> option<mecab> {
     that returns wrapped structure `mecab`"];
 
     unsafe {
-        let m = str::as_c_str(arg) { |buf|
+        let m = do str::as_c_str(arg) |buf| {
             _mecab::mecab_new2(buf)
         };
 
@@ -444,15 +443,17 @@ fn mecab_new2(arg: str) -> option<mecab> {
     }
 }
 
-fn mecab_do(args: [str]) -> int {
+fn mecab_do(args: &[str]) -> int {
     let argc = vec::len(args) as libc::c_int;
 
     unsafe {
-        let mut argv = [];
-        for vec::each(args) {|arg|
-            argv += str::as_buf(arg) { |buf| [buf] };
+        let mut argv = ~[];
+        for vec::each(args) |arg| {
+            do str::as_buf(arg) |buf| {
+                vec::push(argv, buf);
+            }
         }
-        argv += [ptr::null()];
+        vec::push(argv, ptr::null());
 
         let res = _mecab::mecab_do(argc, vec::unsafe::to_ptr(argv));
         res as int
@@ -514,7 +515,7 @@ mod tests {
 
         alt r {
           some::<mecab_node>(node) {
-            node.iter { |_n| }
+            do node.iter |_n| { }
             assert true;
           }
           none::<mecab_node> {
@@ -527,21 +528,21 @@ mod tests {
 #[link_name = "mecab"]
 #[abi = "cdecl"]
 extern mod _mecab {
-    fn mecab_new(argc: libc::c_int, argv: **u8) -> *::_mecab_t;
-    fn mecab_new2(arg: *libc::c_char) -> *::_mecab_t;
-    fn mecab_destroy(mecab: *::_mecab_t);
-    fn mecab_strerror(mecab: *::_mecab_t) -> *libc::c_char;
+    fn mecab_new(argc: libc::c_int, argv: **u8) -> *::mecab_t;
+    fn mecab_new2(arg: *libc::c_char) -> *::mecab_t;
+    fn mecab_destroy(mecab: *::mecab_t);
+    fn mecab_strerror(mecab: *::mecab_t) -> *libc::c_char;
     fn mecab_do(argc: libc::c_int, argv: **u8) -> libc::c_int;
-    fn mecab_sparse_tostr(mecab: *::_mecab_t, input: *u8) -> *libc::c_char;
-    fn mecab_sparse_tostr2(mecab: *::_mecab_t, input: *u8, len: libc::size_t) -> *libc::c_char;
-    fn mecab_nbest_sparse_tostr(mecab: *::_mecab_t, n: libc::size_t, input: *u8) -> *libc::c_char;
-    fn mecab_nbest_sparse_tostr2(mecab: *::_mecab_t, n: libc::size_t, input: *u8, len: libc::size_t) -> *libc::c_char;
-    fn mecab_sparse_tonode(mecab: *::_mecab_t, input: *u8) -> *::mecab_node_t;
-    fn mecab_sparse_tonode2(mecab: *::_mecab_t, input: *u8, len: libc::size_t) -> *::mecab_node_t;
-    fn mecab_nbest_init(mecab: *::_mecab_t, input: *u8) -> libc::c_int;
-    fn mecab_nbest_init2(mecab: *::_mecab_t, input: *u8, len:   libc::size_t) -> libc::c_int;
-    fn mecab_nbest_next_tostr(mecab: *::_mecab_t) -> *libc::c_char;
-    fn mecab_nbest_next_tostr2(mecab: *::_mecab_t, len: libc::size_t) -> *libc::c_char;
-    fn mecab_dictionary_info(mecab: *::_mecab_t) -> *::mecab_dictionary_info_t;
+    fn mecab_sparse_tostr(mecab: *::mecab_t, input: *u8) -> *libc::c_char;
+    fn mecab_sparse_tostr2(mecab: *::mecab_t, input: *u8, len: libc::size_t) -> *libc::c_char;
+    fn mecab_nbest_sparse_tostr(mecab: *::mecab_t, n: libc::size_t, input: *u8) -> *libc::c_char;
+    fn mecab_nbest_sparse_tostr2(mecab: *::mecab_t, n: libc::size_t, input: *u8, len: libc::size_t) -> *libc::c_char;
+    fn mecab_sparse_tonode(mecab: *::mecab_t, input: *u8) -> *::mecab_node_t;
+    fn mecab_sparse_tonode2(mecab: *::mecab_t, input: *u8, len: libc::size_t) -> *::mecab_node_t;
+    fn mecab_nbest_init(mecab: *::mecab_t, input: *u8) -> libc::c_int;
+    fn mecab_nbest_init2(mecab: *::mecab_t, input: *u8, len:   libc::size_t) -> libc::c_int;
+    fn mecab_nbest_next_tostr(mecab: *::mecab_t) -> *libc::c_char;
+    fn mecab_nbest_next_tostr2(mecab: *::mecab_t, len: libc::size_t) -> *libc::c_char;
+    fn mecab_dictionary_info(mecab: *::mecab_t) -> *::mecab_dictionary_info_t;
     fn mecab_version() -> *libc::c_char;
 }
