@@ -18,67 +18,67 @@ export MECAB_BOS_NODE, MECAB_EOS_NODE, MECAB_EON_NODE;
 enum mecab_t = ();
 enum mecab_path_t = ();
 
-#[doc = "same structure of `_mecab::mecab_node_t` that documented in
-<http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>"]
-enum mecab_node_t =
-    { prev:      *mecab_node_t
-    , next:      *mecab_node_t
-    , enext:     *mecab_node_t
-    , bnext:     *mecab_node_t
-    , rpath:     *mecab_path_t
-    , lpath:     *mecab_path_t
-    , surface:   *libc::c_char
-    , feature:   *libc::c_char
-    , id:         libc::c_uint
-    , length:     u16
-    , rlength:    u16
-    , rcAttr:     u16
-    , lcAttr:     u16
-    , posid:      u16
-    , char_type:  u8
-    , stat:       u8
-    , isbest:     u8
-    , alpha:      libc::c_float
-    , beta:       libc::c_float
-    , prob:       libc::c_float
-    , wcost:      i16
-    , cost:       libc::c_long
-    };
+/// same structure of `_mecab::mecab_node_t` that documented in
+/// <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
+enum mecab_node_t = {
+    prev:      *mecab_node_t,
+    next:      *mecab_node_t,
+    enext:     *mecab_node_t,
+    bnext:     *mecab_node_t,
+    rpath:     *mecab_path_t,
+    lpath:     *mecab_path_t,
+    surface:   *libc::c_char,
+    feature:   *libc::c_char,
+    id:         libc::c_uint,
+    length:     u16,
+    rlength:    u16,
+    rcAttr:     u16,
+    lcAttr:     u16,
+    posid:      u16,
+    char_type:  u8,
+    stat:       u8,
+    isbest:     u8,
+    alpha:      libc::c_float,
+    beta:       libc::c_float,
+    prob:       libc::c_float,
+    wcost:      i16,
+    cost:       libc::c_long,
+};
 
-#[doc = "same structure of `_mecab::mecab_dictionary_info_t` that documented in
-<http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>"]
-enum mecab_dictionary_info_t =
-    { filename: *libc::c_char
-    , charset:  *libc::c_char
-    , size:      libc::c_uint
-    , type:      libc::c_int
-    , lsize:     libc::c_uint
-    , rsize:     libc::c_uint
-    , version:   u16
-    , next:     *mecab_dictionary_info_t
-    };
+/// same structure of `_mecab::mecab_dictionary_info_t` that documented in
+/// <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
+enum mecab_dictionary_info_t = {
+    filename: *libc::c_char,
+    charset:  *libc::c_char,
+    size:      libc::c_uint,
+    type:      libc::c_int,
+    lsize:     libc::c_uint,
+    rsize:     libc::c_uint,
+    version:   u16,
+    next:     *mecab_dictionary_info_t,
+};
 
-#[doc = "Parameters for `mecab_node_t.stat`
-Normal node defined in the dictionary."]
+/// Parameters for `mecab_node_t.stat` Normal node
+/// defined in the dictionary.
 const MECAB_NOR_NODE: u8 = 0u8;
 
-#[doc = "Parameters for `mecab_node_t.stat`
-Unknown node not defined in the dictionary."]
+/// Parameters for `mecab_node_t.stat` Unknown node
+/// not defined in the dictionary.
 const MECAB_UNK_NODE: u8 = 1u8;
 
-#[doc = "Parameters for `mecab_node_t.stat`
-Virtual node representing a beginning of the sentence."]
+/// Parameters for `mecab_node_t.stat` Virtual node
+/// representing a beginning of the sentence.
 const MECAB_BOS_NODE: u8 = 2u8;
 
-#[doc = "Parameters for `mecab_node_t.stat`
-Virtual node representing a end of the sentence."]
+/// Parameters for `mecab_node_t.stat` Virtual node
+/// representing a end of the sentence.
 const MECAB_EOS_NODE: u8 = 3u8;
 
-#[doc = "Parameters for `mecab_node_t.stat`
-Virtual node representing a end of the N-best enumeration."]
+/// Parameters for `mecab_node_t.stat` Virtual node
+/// representing a end of the N-best enumeration.
 const MECAB_EON_NODE: u8 = 4u8;
 
-iface mecab_dictionary_info {
+trait mecab_dictionary_info {
     fn bump();
     fn is_end() -> bool;
     fn iter(blk: fn(mecab_dictionary_info));
@@ -91,7 +91,7 @@ iface mecab_dictionary_info {
     fn get_version()  -> uint;
 }
 
-impl of mecab_dictionary_info for *mecab_dictionary_info_t {
+impl *mecab_dictionary_info_t : mecab_dictionary_info {
     fn bump() { }
     fn is_end() -> bool { unsafe { self == ptr::null() } }
     fn iter(_blk: fn(mecab_dictionary_info)) { }
@@ -114,7 +114,7 @@ impl of mecab_dictionary_info for *mecab_dictionary_info_t {
     fn get_version() -> uint { unsafe { (*self).version as uint } }
 }
 
-impl of mecab_dictionary_info for {mut base: *mecab_dictionary_info_t} {
+impl {mut base: *mecab_dictionary_info_t} : mecab_dictionary_info {
     fn bump() {
         unsafe {
             self.base = (*self.base).next as *mecab_dictionary_info_t;
@@ -137,7 +137,7 @@ impl of mecab_dictionary_info for {mut base: *mecab_dictionary_info_t} {
     fn get_version()  -> uint { unsafe { self.base.get_version() } }
 }
 
-iface mecab_node {
+trait mecab_node {
     fn bump();
     fn is_end() -> bool;
     fn iter(blk: fn(mecab_node));
@@ -146,7 +146,7 @@ iface mecab_node {
     fn get_status()  ->  u8;
 }
 
-impl of mecab_node for *mecab_node_t {
+impl *mecab_node_t : mecab_node {
     fn bump() { }
     fn is_end() -> bool { unsafe { self == ptr::null() } }
     fn iter(_blk: fn(mecab_node)) { }
@@ -169,7 +169,7 @@ impl of mecab_node for *mecab_node_t {
     fn get_status() -> u8 { unsafe { (*self).stat } }
 }
 
-impl of mecab_node for {mut base: *mecab_node_t} {
+impl {mut base: *mecab_node_t} : mecab_node {
     fn bump() {
         unsafe {
             self.base = (*self.base).next as *mecab_node_t;
@@ -188,7 +188,7 @@ impl of mecab_node for {mut base: *mecab_node_t} {
     fn get_status()  ->  u8 { unsafe { self.base.get_status() } }
 }
 
-iface mecab {
+trait mecab {
     fn strerror() -> str;
     fn sparse_tostr(input: str) -> option<str>;
     fn sparse_tostr2(input: str, len: uint) -> option<str>;
@@ -204,7 +204,7 @@ iface mecab {
     fn get_dictionary_info() -> option<mecab_dictionary_info>;
 }
 
-impl of mecab for *mecab_t {
+impl *mecab_t : mecab {
     fn strerror() -> str {
         unsafe {
             let res = _mecab::mecab_strerror(self);
@@ -353,7 +353,7 @@ impl of mecab for *mecab_t {
     }
 }
 
-impl <T: mecab, C> of mecab for {base: T, cleanup: C} {
+impl<T: mecab, C> {base: T, cleanup: C} : mecab {
     fn strerror() -> str {
         self.base.strerror()
     }
@@ -401,22 +401,21 @@ class wrapped_mecab {
     drop { _mecab::mecab_destroy(self.m); }
 }
 
+/// The wrapper of `_mecab::mecab_new` that returns wrapped structure `mecab`.
 fn mecab_new(args: &[str]) -> option<mecab> {
-    #[doc = "the wrapper of `_mecab::mecab_new`
-    that returns wrapped structure `mecab`"];
-
-    let argc = vec::len(args) as libc::c_int;
-
     unsafe {
-        let mut argv = ~[];
+        let mut argptrs = ~[];
+        let mut tmps = ~[];
         for vec::each(args) |arg| {
-            do str::as_buf(arg) |buf| {
-                vec::push(argv, buf);
-            }
+            let t = @arg;
+            vec::push(tmps, t);
+            vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
         }
-        vec::push(argv, ptr::null());
+        vec::push(argptrs, ptr::null());
 
-        let m = _mecab::mecab_new(argc, vec::unsafe::to_ptr(argv));
+        let m = vec::as_buf(argptrs, |argv, argc| {
+            _mecab::mecab_new(argc, argv)
+        });
 
         if m == ptr::null() {
             none::<mecab>
@@ -426,14 +425,10 @@ fn mecab_new(args: &[str]) -> option<mecab> {
     }
 }
 
+/// The wrapper of `_mecab::mecab_new2` that returns wrapped structure `mecab`.
 fn mecab_new2(arg: str) -> option<mecab> {
-    #[doc = "the wrapper of `_mecab::mecab_new2`
-    that returns wrapped structure `mecab`"];
-
     unsafe {
-        let m = do str::as_c_str(arg) |buf| {
-            _mecab::mecab_new2(buf)
-        };
+        let m = str::as_c_str(arg, |buf| _mecab::mecab_new2(buf));
 
         if m == ptr::null() {
             none::<mecab>
@@ -444,26 +439,26 @@ fn mecab_new2(arg: str) -> option<mecab> {
 }
 
 fn mecab_do(args: &[str]) -> int {
-    let argc = vec::len(args) as libc::c_int;
-
     unsafe {
-        let mut argv = ~[];
+        let mut argptrs = ~[];
+        let mut tmps = ~[];
         for vec::each(args) |arg| {
-            do str::as_buf(arg) |buf| {
-                vec::push(argv, buf);
-            }
+            let t = @arg;
+            vec::push(tmps, t);
+            vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
         }
-        vec::push(argv, ptr::null());
+        vec::push(argptrs, ptr::null());
 
-        let res = _mecab::mecab_do(argc, vec::unsafe::to_ptr(argv));
+        let res = vec::as_buf(argptrs, |argv, argc| {
+            _mecab::mecab_do(argc, argv)
+        });
+
         res as int
     }
 }
 
+/// the wrapper of `_mecab::mecab_version` that returns version-number string.
 fn mecab_version() -> str {
-    #[doc = "the wrapper of `_mecab::mecab_version`
-    that returns version-number string"];
-
     unsafe {
         let vers = _mecab::mecab_version();
         str::unsafe::from_c_str(vers)
@@ -478,49 +473,49 @@ mod tests {
     }
     #[test]
     fn test_sparse_tostr() {
-        let m = alt mecab_new2("") {
-          some::<mecab>(_m) { _m }
-          none::<mecab>     { fail; }
+        let m = match mecab_new2("") {
+            some(_m) => _m,
+            none     => fail
         };
         let s = "いつもより大きなリンゴを仕入れることが出来た";
         let r = m.sparse_tostr(s);
 
-        alt r {
-          some::<str>(i) { assert 0u != str::char_len(i); }
-          none::<str>    { assert false; }
+        match r {
+            some(i) => { assert 0u != str::char_len(i); }
+            none    => { assert false; }
         }
     }
     #[test]
     fn test_sparse_tostr2() {
-        let m = alt mecab_new2("") {
-          some::<mecab>(_m) { _m }
-          none::<mecab>     { fail; }
+        let m = match mecab_new2("") {
+            some(_m) => _m,
+            none     => fail
         };
         let s = "これはパースするための文です";
         let r = m.sparse_tostr2(s, str::len(s));
 
-        alt r {
-          some::<str>(i) { assert 0u != str::char_len(i); }
-          none::<str>    { assert false; }
+        match r {
+            some::<str>(i) => { assert 0u != str::char_len(i); }
+            none::<str>    => { assert false; }
         }
     }
     #[test]
     fn test_mecab_node_iter() {
-        let m = alt mecab_new2("") {
-          some::<mecab>(_m) { _m }
-          none::<mecab>     { fail; }
+        let m = match mecab_new2("") {
+            some::<mecab>(_m) => _m,
+            none::<mecab>     => fail
         };
         let s = "もももすももももものうち";
         let r = m.sparse_tonode(s);
 
-        alt r {
-          some::<mecab_node>(node) {
-            do node.iter |_n| { }
-            assert true;
-          }
-          none::<mecab_node> {
-            assert false;
-          }
+        match r {
+            some(node) => {
+                do node.iter |_n| { }
+                assert true;
+            }
+            none => {
+                assert false;
+            }
         }
     }
 }
