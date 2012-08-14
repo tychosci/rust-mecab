@@ -48,9 +48,6 @@ if you don't have installed it yet.
     }
 
 
-See [testflight.rs](https://github.com/tychosci/rust-mecab/blob/master/testflight.rs)
-for more details.
-
  TODO
 ------
 
