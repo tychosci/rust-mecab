@@ -15,3 +15,7 @@ This binding is licensed under the same license of MeCab.
 #[license = "GPL/LGPL/BSD"];
 #[crate_type = "lib"];
 
+use std;
+
+#[cfg(test)]
+mod test;

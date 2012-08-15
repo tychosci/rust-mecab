@@ -1,7 +1,7 @@
 #[test]
 fn test_mecab_version() {
-    let vers_str = mecab_version();
-    assert vers_str.is_not_empty();
+    let vers = mecab_version();
+    assert vers.is_not_empty();
 }
 
 #[test]
@@ -35,5 +35,31 @@ fn test_mecab_dictionary_info() {
         io::println(fmt!("lsize:    %?", d.get_lsize()));
         io::println(fmt!("rsize:    %?", d.get_rsize()));
         io::println(fmt!("version:  %?", d.get_version()));
+    }
+}
+
+#[test]
+fn test_mecab_parse() {
+    let mecab = mecab_new2("").get();
+
+    match mecab.parse("この文はテストです") {
+        some(ref s) => io::println(fmt!("%s", *s)),
+        none        => fail ~"failed to parse"
+    }
+}
+
+#[test]
+fn test_mecab_parse_to_node() {
+    let mecab = mecab_new2("").get();
+    let node  = mecab.parse_to_node("この文はテストです").get();
+
+    for node.each |n| {
+        let status = n.get_status();
+
+        if status == MECAB_BOS_NODE || status == MECAB_EOS_NODE {
+            again;
+        }
+
+        io::println(fmt!("surface: %s", n.get_surface()));
     }
 }
