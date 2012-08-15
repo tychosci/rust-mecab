@@ -103,11 +103,10 @@ impl *mecab_node_t {
 impl MecabDictionaryInfo {
     fn each(blk: fn(*mecab_dictionary_info_t) -> bool) {
         let mut p = self.dict;
-        unsafe {
-            while p.is_not_null() {
-                if !blk(p) { break; }
-                p = (*p).next;
-            }
+
+        while p.is_not_null() {
+            if !blk(p) { break; }
+            unsafe { p = (*p).next; }
         }
     }
 }
@@ -115,11 +114,10 @@ impl MecabDictionaryInfo {
 impl MecabNode {
     fn each(blk: fn(*mecab_node_t) -> bool) {
         let mut p = self.node;
-        unsafe {
-            while p.is_not_null() {
-                if !blk(p) { break; }
-                p = (*p).next;
-            }
+
+        while p.is_not_null() {
+            if !blk(p) { break; }
+            unsafe { p = (*p).next; }
         }
     }
 }
