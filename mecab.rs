@@ -9,8 +9,10 @@
 import str::unsafe;
 import libc::*;
 
+#[allow(non_camel_case_types)]
 enum mecab_t = ();
 
+#[allow(non_camel_case_types)]
 /// same structure of `mecab::mecab_path_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 enum mecab_path_t = {
@@ -22,6 +24,7 @@ enum mecab_path_t = {
     prob:   c_float,
 };
 
+#[allow(non_camel_case_types)]
 /// same structure of `mecab::mecab_node_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
 enum mecab_node_t = {
@@ -49,6 +52,7 @@ enum mecab_node_t = {
     cost:       c_long,
 };
 
+#[allow(non_camel_case_types)]
 /// same structure of `mecab::mecab_dictionary_info_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
 enum mecab_dictionary_info_t = {
