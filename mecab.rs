@@ -126,29 +126,25 @@ impl MecabNode {
 
 impl MeCab {
     fn parse(input: &str) -> option<~str> {
-        unsafe {
-            let s = str::as_c_str(input, |buf| {
-                mecab::mecab_sparse_tostr(self.mecab, buf)
-            });
+        let s = str::as_c_str(input, |buf| {
+            mecab::mecab_sparse_tostr(self.mecab, buf)
+        });
 
-            if s.is_null() {
-                none
-            } else {
-                some(unsafe::from_c_str(s))
-            }
+        if s.is_null() {
+            none
+        } else {
+            some(unsafe { unsafe::from_c_str(s) })
         }
     }
     fn parse_to_node(input: &str) -> option<@MecabNode> {
-        unsafe {
-            let node = str::as_c_str(input, |buf| {
-                mecab::mecab_sparse_tonode(self.mecab, buf)
-            });
+        let node = str::as_c_str(input, |buf| {
+            mecab::mecab_sparse_tonode(self.mecab, buf)
+        });
 
-            if node.is_null() {
-                none
-            } else {
-                some(@MecabNode{node: node})
-            }
+        if node.is_null() {
+            none
+        } else {
+            some(@MecabNode{node: node})
         }
     }
     fn get_dictionary_info() -> option<@MecabDictionaryInfo> {
@@ -166,48 +162,43 @@ impl MeCab {
 fn mecab_new(args: &[&str]) -> option<@MeCab> {
     let argc = args.len() as c_int;
 
-    unsafe {
-        let mut argptrs = ~[];
-        let mut tmps    = ~[];
+    let mut argptrs = ~[];
+    let mut tmps    = ~[];
 
-        for args.each |arg| {
-            let t = @arg;
-            vec::push(tmps, t);
-            vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
-        }
-        vec::push(argptrs, ptr::null());
+    for args.each |arg| {
+        let t = @arg;
+        vec::push(tmps, t);
+        vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
+    }
+    vec::push(argptrs, ptr::null());
 
-        let mecab = vec::as_buf(argptrs, |argv, _len| {
-            mecab::mecab_new(argc, argv)
-        });
+    let mecab = vec::as_buf(argptrs, |argv, _len| {
+        mecab::mecab_new(argc, argv)
+    });
 
-        if mecab.is_null() {
-            none
-        } else {
-            some(@MeCab{mecab: mecab})
-        }
+    if mecab.is_null() {
+        none
+    } else {
+        some(@MeCab{mecab: mecab})
     }
 }
 
 /// The wrapper of `mecab::mecab_new2` that may return `MeCab`.
 fn mecab_new2(arg: &str) -> option<@MeCab> {
-    unsafe {
-        let mecab = str::as_c_str(arg, |buf| mecab::mecab_new2(buf));
+    let mecab = str::as_c_str(arg, |buf| mecab::mecab_new2(buf));
 
-        if mecab.is_null() {
-            none
-        } else {
-            some(@MeCab{mecab: mecab})
-        }
+    if mecab.is_null() {
+        none
+    } else {
+        some(@MeCab{mecab: mecab})
     }
 }
 
 /// the wrapper of `mecab::mecab_version` that returns version-number string.
 fn mecab_version() -> ~str {
-    unsafe {
-        let vers = mecab::mecab_version();
-        str::unsafe::from_c_str(vers)
-    }
+    let vers = mecab::mecab_version();
+
+    unsafe { unsafe::from_c_str(vers) }
 }
 
 /// Parameters for `mecab_node_t.stat` Normal node
