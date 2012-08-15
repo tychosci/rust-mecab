@@ -13,7 +13,7 @@ import libc::*;
 enum mecab_t = ();
 
 #[allow(non_camel_case_types)]
-/// same structure of `mecab::mecab_path_t` that documented in
+/// Same structure of `mecab::mecab_path_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 enum mecab_path_t = {
     rnode: *mecab_node_t,
@@ -25,7 +25,7 @@ enum mecab_path_t = {
 };
 
 #[allow(non_camel_case_types)]
-/// same structure of `mecab::mecab_node_t` that documented in
+/// Same structure of `mecab::mecab_node_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
 enum mecab_node_t = {
     prev:      *mecab_node_t,
@@ -53,7 +53,7 @@ enum mecab_node_t = {
 };
 
 #[allow(non_camel_case_types)]
-/// same structure of `mecab::mecab_dictionary_info_t` that documented in
+/// Same structure of `mecab::mecab_dictionary_info_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
 enum mecab_dictionary_info_t = {
     filename: *c_char,
@@ -66,45 +66,59 @@ enum mecab_dictionary_info_t = {
     next:     *mecab_dictionary_info_t,
 };
 
-struct MecabDictionaryInfo {
+/// Wrapped structure for `mecab_dictionary_info_t`.
+struct MeCabDictionaryInfo {
     dict: *mecab_dictionary_info_t;
 }
 
-struct MecabNode {
+/// Wrapped structure for `mecab_node_t`.
+struct MeCabNode {
     node: *mecab_node_t;
 }
 
+/// Wrapped structure for `mecab_t`.
 struct MeCab {
     mecab: *mecab_t;
     drop { mecab::mecab_destroy(self.mecab); }
 }
 
 impl *mecab_dictionary_info_t {
+    /// Returns `mecab_dictionary_info_t.filename`.
     pure fn get_filename() -> ~str { unsafe { unsafe::from_c_str((*self).filename) } }
+    /// Returns `mecab_dictionary_info_t.charset`.
     pure fn get_charset()  -> ~str { unsafe { unsafe::from_c_str((*self).charset)  } }
+    /// Returns `mecab_dictionary_info_t.size`.
     pure fn get_size()     -> uint { unsafe { (*self).size    as uint } }
+    /// Returns `mecab_dictionary_info_t.type`.
     pure fn get_type()     ->  int { unsafe { (*self).type    as  int } }
+    /// Returns `mecab_dictionary_info_t.lsize`.
     pure fn get_lsize()    -> uint { unsafe { (*self).lsize   as uint } }
+    /// Returns `mecab_dictionary_info_t.rsize`.
     pure fn get_rsize()    -> uint { unsafe { (*self).rsize   as uint } }
+    /// Returns `mecab_dictionary_info_t.version`.
     pure fn get_version()  -> uint { unsafe { (*self).version as uint } }
 }
 
 impl *mecab_node_t {
+    /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface() -> ~str {
         unsafe {
             let s = str::unsafe::from_c_str((*self).surface);
             str::slice(s, 0, (*self).length as uint)
         }
     }
+    /// Returns `mecab_node_t.feature`.
     pure fn get_feature() -> ~str {
         unsafe { str::unsafe::from_c_str((*self).feature) }
     }
+    /// Returns `mecab_node_t.status`.
     pure fn get_status() -> u8 {
         unsafe { (*self).stat }
     }
 }
 
-impl MecabDictionaryInfo {
+impl MeCabDictionaryInfo {
+    /// Iterates all listed items on `mecab_dictionary_info_t`.
     fn each(blk: fn(*mecab_dictionary_info_t) -> bool) {
         let mut p = self.dict;
 
@@ -115,7 +129,8 @@ impl MecabDictionaryInfo {
     }
 }
 
-impl MecabNode {
+impl MeCabNode {
+    /// Iterates all listed items on `mecab_node_t`.
     fn each(blk: fn(*mecab_node_t) -> bool) {
         let mut p = self.node;
 
@@ -127,6 +142,7 @@ impl MecabNode {
 }
 
 impl MeCab {
+    /// Parses input and may return the string of result.
     fn parse(input: &str) -> option<~str> {
         let s = str::as_c_str(input, |buf| {
             mecab::mecab_sparse_tostr(self.mecab, buf)
@@ -138,7 +154,8 @@ impl MeCab {
             some(unsafe { unsafe::from_c_str(s) })
         }
     }
-    fn parse_to_node(input: &str) -> option<@MecabNode> {
+    /// Parses input and may return `MeCabNode`.
+    fn parse_to_node(input: &str) -> option<@MeCabNode> {
         let node = str::as_c_str(input, |buf| {
             mecab::mecab_sparse_tonode(self.mecab, buf)
         });
@@ -146,16 +163,17 @@ impl MeCab {
         if node.is_null() {
             none
         } else {
-            some(@MecabNode{node: node})
+            some(@MeCabNode{node: node})
         }
     }
-    fn get_dictionary_info() -> option<@MecabDictionaryInfo> {
+    /// Returns `MeCabDictionaryInfo`.
+    fn get_dictionary_info() -> option<@MeCabDictionaryInfo> {
         let dict = mecab::mecab_dictionary_info(self.mecab);
 
         if dict.is_null() {
             none
         } else {
-            some(@MecabDictionaryInfo{dict: dict})
+            some(@MeCabDictionaryInfo{dict: dict})
         }
     }
 }
@@ -196,7 +214,7 @@ fn mecab_new2(arg: &str) -> option<@MeCab> {
     }
 }
 
-/// the wrapper of `mecab::mecab_version` that returns version-number string.
+/// The wrapper of `mecab::mecab_version` that returns version-number string.
 fn mecab_version() -> ~str {
     let vers = mecab::mecab_version();
 
