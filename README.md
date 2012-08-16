@@ -16,7 +16,6 @@ Examples
 
 ### わかち書き
 
-    use std;
     use mecab;
 
     fn main() {
