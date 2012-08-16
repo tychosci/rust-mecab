@@ -56,10 +56,8 @@ fn test_mecab_parse_to_node() {
     for node.each |n| {
         let status = n.get_status();
 
-        if status == MECAB_BOS_NODE || status == MECAB_EOS_NODE {
-            again;
+        if status == MECAB_NOR_NODE || status == MECAB_UNK_NODE {
+            io::println(fmt!("surface: %s", n.get_surface()));
         }
-
-        io::println(fmt!("surface: %s", n.get_surface()));
     }
 }
