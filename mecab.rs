@@ -143,43 +143,43 @@ impl MeCabNode {
 
 impl MeCab {
     /// Parses input and may return the string of result.
-    fn parse(input: &str) -> option<~str> {
+    fn parse(input: &str) -> Option<~str> {
         let s = str::as_c_str(input, |buf| {
             mecab::mecab_sparse_tostr(self.mecab, buf)
         });
 
         if s.is_null() {
-            none
+            None
         } else {
-            some(unsafe { unsafe::from_c_str(s) })
+            Some(unsafe { unsafe::from_c_str(s) })
         }
     }
     /// Parses input and may return `MeCabNode`.
-    fn parse_to_node(input: &str) -> option<@MeCabNode> {
+    fn parse_to_node(input: &str) -> Option<@MeCabNode> {
         let node = str::as_c_str(input, |buf| {
             mecab::mecab_sparse_tonode(self.mecab, buf)
         });
 
         if node.is_null() {
-            none
+            None
         } else {
-            some(@MeCabNode{node: node})
+            Some(@MeCabNode{node: node})
         }
     }
     /// Returns `MeCabDictionaryInfo`.
-    fn get_dictionary_info() -> option<@MeCabDictionaryInfo> {
+    fn get_dictionary_info() -> Option<@MeCabDictionaryInfo> {
         let dict = mecab::mecab_dictionary_info(self.mecab);
 
         if dict.is_null() {
-            none
+            None
         } else {
-            some(@MeCabDictionaryInfo{dict: dict})
+            Some(@MeCabDictionaryInfo{dict: dict})
         }
     }
 }
 
 /// The wrapper of `mecab::mecab_new` that may return `MeCab`.
-fn mecab_new(args: &[&str]) -> option<@MeCab> {
+fn mecab_new(args: &[&str]) -> Option<@MeCab> {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
@@ -197,20 +197,20 @@ fn mecab_new(args: &[&str]) -> option<@MeCab> {
     });
 
     if mecab.is_null() {
-        none
+        None
     } else {
-        some(@MeCab{mecab: mecab})
+        Some(@MeCab{mecab: mecab})
     }
 }
 
 /// The wrapper of `mecab::mecab_new2` that may return `MeCab`.
-fn mecab_new2(arg: &str) -> option<@MeCab> {
+fn mecab_new2(arg: &str) -> Option<@MeCab> {
     let mecab = str::as_c_str(arg, |buf| mecab::mecab_new2(buf));
 
     if mecab.is_null() {
-        none
+        None
     } else {
-        some(@MeCab{mecab: mecab})
+        Some(@MeCab{mecab: mecab})
     }
 }
 

@@ -7,8 +7,8 @@ fn test_mecab_version() {
 #[test]
 fn test_mecab_new() {
     let status = match mecab_new(["test_mecab_new"]) {
-        some(_) => true,
-        none    => false,
+        Some(_) => true,
+        None    => false,
     };
     assert status;
 }
@@ -16,8 +16,8 @@ fn test_mecab_new() {
 #[test]
 fn test_mecab_new2() {
     let status = match mecab_new2("") {
-        some(_) => true,
-        none    => false,
+        Some(_) => true,
+        None    => false,
     };
     assert status;
 }
@@ -43,8 +43,8 @@ fn test_mecab_parse() {
     let mecab = mecab_new2("").get();
 
     match mecab.parse("この文はテストです") {
-        some(ref s) => io::println(fmt!("%s", *s)),
-        none        => fail ~"failed to parse"
+        Some(ref s) => io::println(fmt!("%s", *s)),
+        None        => fail ~"failed to parse"
     }
 }
 
