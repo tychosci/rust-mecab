@@ -6,8 +6,8 @@
 // This binding is licensed under the same license of MeCab.
 //
 
-import str::unsafe;
-import libc::*;
+use str::unsafe;
+use libc::*;
 
 #[allow(non_camel_case_types)]
 enum mecab_t = ();
