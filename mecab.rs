@@ -230,23 +230,23 @@ fn version() -> ~str {
 
 /// Parameters for `mecab_node_t.stat` Normal node
 /// defined in the dictionary.
-const MECAB_NOR_NODE: u8 = 0u8;
+const NOR_NODE: u8 = 0u8;
 
 /// Parameters for `mecab_node_t.stat` Unknown node
 /// not defined in the dictionary.
-const MECAB_UNK_NODE: u8 = 1u8;
+const UNK_NODE: u8 = 1u8;
 
 /// Parameters for `mecab_node_t.stat` Virtual node
 /// representing a beginning of the sentence.
-const MECAB_BOS_NODE: u8 = 2u8;
+const BOS_NODE: u8 = 2u8;
 
 /// Parameters for `mecab_node_t.stat` Virtual node
 /// representing a end of the sentence.
-const MECAB_EOS_NODE: u8 = 3u8;
+const EOS_NODE: u8 = 3u8;
 
 /// Parameters for `mecab_node_t.stat` Virtual node
 /// representing a end of the N-best enumeration.
-const MECAB_EON_NODE: u8 = 4u8;
+const EON_NODE: u8 = 4u8;
 
 // NB: Need to expand `mecab-config --libs-only-L` at linking time
 extern mod mecab {

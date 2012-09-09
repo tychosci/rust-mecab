@@ -32,8 +32,7 @@ Examples
         for node.each |n| {
             let status = n.get_status();
 
-            if (status == mecab::MECAB_UNK_NODE ||
-                status == mecab::MECAB_NOR_NODE) {
+            if status == mecab::UNK_NODE || status == mecab::NOR_NODE {
                 io::print(fmt!("%s ", n.get_surface()));
             }
         }
