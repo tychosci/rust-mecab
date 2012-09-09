@@ -16,10 +16,10 @@ Examples
 
 ### わかち書き
 
-    use mecab;
+    extern mod mecab;
 
     fn main() {
-        let mecab = mecab::mecab_new2("").get();
+        let mecab = mecab::new2("").get();
 
         let input = "うらにわにはにわにわにはにわにわとりがいる";
 
@@ -32,8 +32,8 @@ Examples
         for node.each |n| {
             let status = n.get_status();
 
-            if status == mecab::MECAB_UNK_NODE ||
-               status == mecab::MECAB_NOR_NODE {
+            if (status == mecab::MECAB_UNK_NODE ||
+                status == mecab::MECAB_NOR_NODE) {
                 io::print(fmt!("%s ", n.get_surface()));
             }
         }

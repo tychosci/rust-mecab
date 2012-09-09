@@ -103,13 +103,13 @@ impl *mecab_node_t {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface() -> ~str {
         unsafe {
-            let s = str::unsafe::from_c_str((*self).surface);
+            let s = unsafe::from_c_str((*self).surface);
             str::slice(s, 0, (*self).length as uint)
         }
     }
     /// Returns `mecab_node_t.feature`.
     pure fn get_feature() -> ~str {
-        unsafe { str::unsafe::from_c_str((*self).feature) }
+        unsafe { unsafe::from_c_str((*self).feature) }
     }
     /// Returns `mecab_node_t.status`.
     pure fn get_status() -> u8 {
@@ -143,43 +143,50 @@ impl MeCabNode {
 
 impl MeCab {
     /// Parses input and may return the string of result.
-    fn parse(input: &str) -> Option<~str> {
+    fn parse(input: &str) -> Result<~str, ~str> {
         let s = str::as_c_str(input, |buf| {
             mecab::mecab_sparse_tostr(self.mecab, buf)
         });
 
         if s.is_null() {
-            None
+            let msg = self.strerror();
+            Err(msg)
         } else {
-            Some(unsafe { unsafe::from_c_str(s) })
+            Ok(unsafe { unsafe::from_c_str(s) })
         }
     }
     /// Parses input and may return `MeCabNode`.
-    fn parse_to_node(input: &str) -> Option<@MeCabNode> {
+    fn parse_to_node(input: &str) -> Result<@MeCabNode, ~str> {
         let node = str::as_c_str(input, |buf| {
             mecab::mecab_sparse_tonode(self.mecab, buf)
         });
 
         if node.is_null() {
-            None
+            let msg = self.strerror();
+            Err(msg)
         } else {
-            Some(@MeCabNode{node: node})
+            Ok(@MeCabNode{node: node})
         }
     }
     /// Returns `MeCabDictionaryInfo`.
-    fn get_dictionary_info() -> Option<@MeCabDictionaryInfo> {
+    fn get_dictionary_info() -> Result<@MeCabDictionaryInfo, ~str> {
         let dict = mecab::mecab_dictionary_info(self.mecab);
 
         if dict.is_null() {
-            None
+            let msg = self.strerror();
+            Err(msg)
         } else {
-            Some(@MeCabDictionaryInfo{dict: dict})
+            Ok(@MeCabDictionaryInfo{dict: dict})
         }
+    }
+    priv fn strerror() -> ~str {
+        let s = mecab::mecab_strerror(self.mecab);
+        unsafe { unsafe::from_c_str(s) }
     }
 }
 
 /// The wrapper of `mecab::mecab_new` that may return `MeCab`.
-fn mecab_new(args: &[&str]) -> Option<@MeCab> {
+fn new(args: &[&str]) -> Result<@MeCab, ~str> {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
@@ -197,25 +204,25 @@ fn mecab_new(args: &[&str]) -> Option<@MeCab> {
     });
 
     if mecab.is_null() {
-        None
+        Err(~"unavailable to create new instance")
     } else {
-        Some(@MeCab{mecab: mecab})
+        Ok(@MeCab{mecab: mecab})
     }
 }
 
 /// The wrapper of `mecab::mecab_new2` that may return `MeCab`.
-fn mecab_new2(arg: &str) -> Option<@MeCab> {
+fn new2(arg: &str) -> Result<@MeCab, ~str> {
     let mecab = str::as_c_str(arg, |buf| mecab::mecab_new2(buf));
 
     if mecab.is_null() {
-        None
+        Err(~"unavailable to create new instance")
     } else {
-        Some(@MeCab{mecab: mecab})
+        Ok(@MeCab{mecab: mecab})
     }
 }
 
 /// The wrapper of `mecab::mecab_version` that returns version-number string.
-fn mecab_version() -> ~str {
+fn version() -> ~str {
     let vers = mecab::mecab_version();
 
     unsafe { unsafe::from_c_str(vers) }

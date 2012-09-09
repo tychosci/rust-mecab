@@ -1,30 +1,30 @@
 #[test]
 fn test_mecab_version() {
-    let vers = mecab_version();
+    let vers = version();
     assert vers.is_not_empty();
 }
 
 #[test]
 fn test_mecab_new() {
-    let status = match mecab_new(["test_mecab_new"]) {
-        Some(_) => true,
-        None    => false,
+    let status = match new(["test_mecab_new"]) {
+        Ok(_)  => true,
+        Err(_) => false,
     };
     assert status;
 }
 
 #[test]
 fn test_mecab_new2() {
-    let status = match mecab_new2("") {
-        Some(_) => true,
-        None    => false,
+    let status = match new2("") {
+        Ok(_)  => true,
+        Err(_) => false,
     };
     assert status;
 }
 
 #[test]
 fn test_mecab_dictionary_info() {
-    let mecab = mecab_new2("").get();
+    let mecab = new2("").get();
     let dict  = mecab.get_dictionary_info().get();
 
     for dict.each |d| {
@@ -40,17 +40,17 @@ fn test_mecab_dictionary_info() {
 
 #[test]
 fn test_mecab_parse() {
-    let mecab = mecab_new2("").get();
+    let mecab = new2("").get();
 
     match mecab.parse("この文はテストです") {
-        Some(ref s) => io::println(fmt!("%s", *s)),
-        None        => fail ~"failed to parse"
+        Ok(ref s)    => io::println(fmt!("%s", *s)),
+        Err(ref msg) => fail *msg
     }
 }
 
 #[test]
 fn test_mecab_parse_to_node() {
-    let mecab = mecab_new2("").get();
+    let mecab = new2("").get();
     let node  = mecab.parse_to_node("この文はテストです").get();
 
     for node.each |n| {
