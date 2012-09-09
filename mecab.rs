@@ -68,17 +68,17 @@ priv enum mecab_dictionary_info_t = {
 
 /// Wrapped structure for `mecab_dictionary_info_t`.
 struct MeCabDictionaryInfo {
-    priv dict: *mecab_dictionary_info_t;
+    priv dict: *mecab_dictionary_info_t,
 }
 
 /// Wrapped structure for `mecab_node_t`.
 struct MeCabNode {
-    priv node: *mecab_node_t;
+    priv node: *mecab_node_t,
 }
 
 /// Wrapped structure for `mecab_t`.
 struct MeCab {
-    priv mecab: *mecab_t;
+    priv mecab: *mecab_t,
     drop { mecab::mecab_destroy(self.mecab); }
 }
 
