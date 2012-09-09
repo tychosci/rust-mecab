@@ -1,6 +1,6 @@
 # Makefile
 
-E        := example
+E        := examples
 BINDIR   := bin
 LIBDIR   := lib
 TESTDIR  := test
