@@ -10,12 +10,12 @@ use str::unsafe;
 use libc::*;
 
 #[allow(non_camel_case_types)]
-enum mecab_t = ();
+priv enum mecab_t = ();
 
 #[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_path_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
-enum mecab_path_t = {
+priv enum mecab_path_t = {
     rnode: *mecab_node_t,
     rnext: *mecab_path_t,
     lnode: *mecab_node_t,
@@ -27,7 +27,7 @@ enum mecab_path_t = {
 #[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_node_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
-enum mecab_node_t = {
+priv enum mecab_node_t = {
     prev:      *mecab_node_t,
     next:      *mecab_node_t,
     enext:     *mecab_node_t,
@@ -55,7 +55,7 @@ enum mecab_node_t = {
 #[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_dictionary_info_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
-enum mecab_dictionary_info_t = {
+priv enum mecab_dictionary_info_t = {
     filename: *c_char,
     charset:  *c_char,
     size:      c_uint,
@@ -68,17 +68,17 @@ enum mecab_dictionary_info_t = {
 
 /// Wrapped structure for `mecab_dictionary_info_t`.
 struct MeCabDictionaryInfo {
-    dict: *mecab_dictionary_info_t;
+    priv dict: *mecab_dictionary_info_t;
 }
 
 /// Wrapped structure for `mecab_node_t`.
 struct MeCabNode {
-    node: *mecab_node_t;
+    priv node: *mecab_node_t;
 }
 
 /// Wrapped structure for `mecab_t`.
 struct MeCab {
-    mecab: *mecab_t;
+    priv mecab: *mecab_t;
     drop { mecab::mecab_destroy(self.mecab); }
 }
 
