@@ -82,7 +82,23 @@ struct MeCab {
     drop { mecab::mecab_destroy(self.mecab); }
 }
 
-impl *mecab_dictionary_info_t {
+trait IMeCabDict {
+    pure fn get_filename() -> ~str;
+    pure fn get_charset()  -> ~str;
+    pure fn get_size()     -> uint;
+    pure fn get_type()     ->  int;
+    pure fn get_lsize()    -> uint;
+    pure fn get_rsize()    -> uint;
+    pure fn get_version()  -> uint;
+}
+
+trait IMeCabNode {
+    pure fn get_surface() -> ~str;
+    pure fn get_feature() -> ~str;
+    pure fn get_status()  ->   u8;
+}
+
+impl *mecab_dictionary_info_t : IMeCabDict {
     /// Returns `mecab_dictionary_info_t.filename`.
     pure fn get_filename() -> ~str { unsafe { unsafe::from_c_str((*self).filename) } }
     /// Returns `mecab_dictionary_info_t.charset`.
@@ -99,7 +115,7 @@ impl *mecab_dictionary_info_t {
     pure fn get_version()  -> uint { unsafe { (*self).version as uint } }
 }
 
-impl *mecab_node_t {
+impl *mecab_node_t : IMeCabNode {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface() -> ~str {
         unsafe {
@@ -119,11 +135,11 @@ impl *mecab_node_t {
 
 impl MeCabDictionaryInfo {
     /// Iterates all listed items on `mecab_dictionary_info_t`.
-    fn each(blk: fn(*mecab_dictionary_info_t) -> bool) {
+    fn each(blk: &fn(IMeCabDict) -> bool) {
         let mut p = self.dict;
 
         while p.is_not_null() {
-            if !blk(p) { break; }
+            if !blk(p as IMeCabDict) { break; }
             unsafe { p = (*p).next; }
         }
     }
@@ -131,11 +147,11 @@ impl MeCabDictionaryInfo {
 
 impl MeCabNode {
     /// Iterates all listed items on `mecab_node_t`.
-    fn each(blk: fn(*mecab_node_t) -> bool) {
+    fn each(blk: &fn(IMeCabNode) -> bool) {
         let mut p = self.node;
 
         while p.is_not_null() {
-            if !blk(p) { break; }
+            if !blk(p as IMeCabNode) { break; }
             unsafe { p = (*p).next; }
         }
     }
@@ -204,7 +220,7 @@ fn new(args: &[&str]) -> Result<@MeCab, ~str> {
     });
 
     if mecab.is_null() {
-        Err(~"unavailable to create new instance")
+        Err(~"failed to create new instance")
     } else {
         Ok(@MeCab{mecab: mecab})
     }
@@ -215,7 +231,7 @@ fn new2(arg: &str) -> Result<@MeCab, ~str> {
     let mecab = str::as_c_str(arg, |buf| mecab::mecab_new2(buf));
 
     if mecab.is_null() {
-        Err(~"unavailable to create new instance")
+        Err(~"failed to create new instance")
     } else {
         Ok(@MeCab{mecab: mecab})
     }
