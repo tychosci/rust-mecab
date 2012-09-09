@@ -1,5 +1,7 @@
 # Makefile
 
+E        := example
+BINDIR   := bin
 LIBDIR   := lib
 TESTDIR  := test
 SOURCES  := mecab.rc mecab.rs
@@ -15,6 +17,16 @@ libmecab: setup-lib $(SOURCES)
 test: setup-test $(SOURCES)
 	rustc -O mecab.rc -L $(LIB_DEPS) --test --out-dir $(TESTDIR)
 
+wakachigaki: setup-bin libmecab $(E)/wakachigaki.rs
+	rustc -O $(E)/wakachigaki.rs -L $(LIBDIR) --out-dir $(BINDIR)
+
+katakanize: setup-bin libmecab $(E)/katakanize.rs
+	rustc -O $(E)/katakanize.rs -L $(LIBDIR) --out-dir $(BINDIR)
+
+
+setup-bin:
+	mkdir -p $(BINDIR)
+
 setup-lib:
 	mkdir -p $(LIBDIR)
 
@@ -23,5 +35,6 @@ setup-test:
 
 .PHONY: clean
 clean:
+	if [ -d "$(BINDIR)" ]; then rm -r "$(BINDIR)"; fi
 	if [ -d "$(LIBDIR)" ]; then rm -r "$(LIBDIR)"; fi
 	if [ -d "$(TESTDIR)" ]; then rm -r "$(TESTDIR)"; fi
