@@ -123,10 +123,12 @@ impl *mecab_node_t : IMeCabNode {
             str::slice(s, 0, (*self).length as uint)
         }
     }
+
     /// Returns `mecab_node_t.feature`.
     pure fn get_feature() -> ~str {
         unsafe { unsafe::from_c_str((*self).feature) }
     }
+
     /// Returns `mecab_node_t.status`.
     pure fn get_status() -> u8 {
         unsafe { (*self).stat }
@@ -171,6 +173,7 @@ impl MeCab {
             Ok(unsafe { unsafe::from_c_str(s) })
         }
     }
+
     /// Parses input and may return `MeCabNode`.
     fn parse_to_node(input: &str) -> Result<@MeCabNode, ~str> {
         let node = str::as_c_str(input, |buf| {
@@ -184,6 +187,7 @@ impl MeCab {
             Ok(@MeCabNode{node: node})
         }
     }
+
     /// Returns `MeCabDictionaryInfo`.
     fn get_dictionary_info() -> Result<@MeCabDictionaryInfo, ~str> {
         let dict = mecab::mecab_dictionary_info(self.mecab);
@@ -195,6 +199,7 @@ impl MeCab {
             Ok(@MeCabDictionaryInfo{dict: dict})
         }
     }
+
     priv fn strerror() -> ~str {
         let s = mecab::mecab_strerror(self.mecab);
         unsafe { unsafe::from_c_str(s) }
