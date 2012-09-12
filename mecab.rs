@@ -15,19 +15,19 @@ priv enum mecab_t = ();
 #[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_path_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
-priv enum mecab_path_t = {
+priv struct mecab_path_t {
     rnode: *mecab_node_t,
     rnext: *mecab_path_t,
     lnode: *mecab_node_t,
     lnext: *mecab_path_t,
     cost:   c_int,
     prob:   c_float,
-};
+}
 
 #[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_node_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
-priv enum mecab_node_t = {
+priv struct mecab_node_t {
     prev:      *mecab_node_t,
     next:      *mecab_node_t,
     enext:     *mecab_node_t,
@@ -50,21 +50,21 @@ priv enum mecab_node_t = {
     prob:       c_float,
     wcost:      i16,
     cost:       c_long,
-};
+}
 
 #[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_dictionary_info_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
-priv enum mecab_dictionary_info_t = {
+priv struct mecab_dictionary_info_t {
     filename: *c_char,
     charset:  *c_char,
     size:      c_uint,
-    type:      c_int,
+    ty:        c_int,
     lsize:     c_uint,
     rsize:     c_uint,
     version:   u16,
     next:     *mecab_dictionary_info_t,
-};
+}
 
 /// Wrapped structure for `mecab_dictionary_info_t`.
 struct MeCabDictionaryInfo {
@@ -106,7 +106,7 @@ impl *mecab_dictionary_info_t : IMeCabDict {
     /// Returns `mecab_dictionary_info_t.size`.
     pure fn get_size()     -> uint { unsafe { (*self).size    as uint } }
     /// Returns `mecab_dictionary_info_t.type`.
-    pure fn get_type()     ->  int { unsafe { (*self).type    as  int } }
+    pure fn get_type()     ->  int { unsafe { (*self).ty      as  int } }
     /// Returns `mecab_dictionary_info_t.lsize`.
     pure fn get_lsize()    -> uint { unsafe { (*self).lsize   as uint } }
     /// Returns `mecab_dictionary_info_t.rsize`.
