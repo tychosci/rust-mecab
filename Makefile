@@ -35,6 +35,6 @@ setup-test:
 
 .PHONY: clean
 clean:
-	if [ -d "$(BINDIR)" ]; then rm -r "$(BINDIR)"; fi
-	if [ -d "$(LIBDIR)" ]; then rm -r "$(LIBDIR)"; fi
-	if [ -d "$(TESTDIR)" ]; then rm -r "$(TESTDIR)"; fi
+	@rm -rf "$(BINDIR)"
+	@rm -rf "$(LIBDIR)"
+	@rm -rf "$(TESTDIR)"
