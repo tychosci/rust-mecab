@@ -6,7 +6,7 @@
 // This binding is licensed under the same license of MeCab.
 //
 
-use str::unsafe;
+use str::raw;
 use libc::*;
 
 #[allow(non_camel_case_types)]
@@ -79,7 +79,7 @@ struct MeCabNode {
 /// Wrapped structure for `mecab_t`.
 struct MeCab {
     priv mecab: *mecab_t,
-    drop { mecab::mecab_destroy(self.mecab); }
+    drop { mecab_destroy(self.mecab); }
 }
 
 trait IMeCabDict {
@@ -100,9 +100,9 @@ trait IMeCabNode {
 
 impl *mecab_dictionary_info_t : IMeCabDict {
     /// Returns `mecab_dictionary_info_t.filename`.
-    pure fn get_filename() -> ~str { unsafe { unsafe::from_c_str((*self).filename) } }
+    pure fn get_filename() -> ~str { unsafe { raw::from_c_str((*self).filename) } }
     /// Returns `mecab_dictionary_info_t.charset`.
-    pure fn get_charset()  -> ~str { unsafe { unsafe::from_c_str((*self).charset)  } }
+    pure fn get_charset()  -> ~str { unsafe { raw::from_c_str((*self).charset)  } }
     /// Returns `mecab_dictionary_info_t.size`.
     pure fn get_size()     -> uint { unsafe { (*self).size    as uint } }
     /// Returns `mecab_dictionary_info_t.type`.
@@ -119,14 +119,14 @@ impl *mecab_node_t : IMeCabNode {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface() -> ~str {
         unsafe {
-            let s = unsafe::from_c_str((*self).surface);
+            let s = raw::from_c_str((*self).surface);
             str::slice(s, 0, (*self).length as uint)
         }
     }
 
     /// Returns `mecab_node_t.feature`.
     pure fn get_feature() -> ~str {
-        unsafe { unsafe::from_c_str((*self).feature) }
+        unsafe { raw::from_c_str((*self).feature) }
     }
 
     /// Returns `mecab_node_t.status`.
@@ -163,21 +163,21 @@ impl MeCab {
     /// Parses input and may return the string of result.
     fn parse(input: &str) -> Result<~str, ~str> {
         let s = str::as_c_str(input, |buf| {
-            mecab::mecab_sparse_tostr(self.mecab, buf)
+            mecab_sparse_tostr(self.mecab, buf)
         });
 
         if s.is_null() {
             let msg = self.strerror();
             Err(msg)
         } else {
-            Ok(unsafe { unsafe::from_c_str(s) })
+            Ok(unsafe { raw::from_c_str(s) })
         }
     }
 
     /// Parses input and may return `MeCabNode`.
     fn parse_to_node(input: &str) -> Result<@MeCabNode, ~str> {
         let node = str::as_c_str(input, |buf| {
-            mecab::mecab_sparse_tonode(self.mecab, buf)
+            mecab_sparse_tonode(self.mecab, buf)
         });
 
         if node.is_null() {
@@ -190,7 +190,7 @@ impl MeCab {
 
     /// Returns `MeCabDictionaryInfo`.
     fn get_dictionary_info() -> Result<@MeCabDictionaryInfo, ~str> {
-        let dict = mecab::mecab_dictionary_info(self.mecab);
+        let dict = mecab_dictionary_info(self.mecab);
 
         if dict.is_null() {
             let msg = self.strerror();
@@ -201,8 +201,8 @@ impl MeCab {
     }
 
     priv fn strerror() -> ~str {
-        let s = mecab::mecab_strerror(self.mecab);
-        unsafe { unsafe::from_c_str(s) }
+        let s = mecab_strerror(self.mecab);
+        unsafe { raw::from_c_str(s) }
     }
 }
 
@@ -220,8 +220,8 @@ fn new(args: &[&str]) -> Result<@MeCab, ~str> {
     }
     vec::push(argptrs, ptr::null());
 
-    let mecab = vec::as_buf(argptrs, |argv, _len| {
-        mecab::mecab_new(argc, argv)
+    let mecab = vec::as_imm_buf(argptrs, |argv, _len| {
+        mecab_new(argc, argv)
     });
 
     if mecab.is_null() {
@@ -233,7 +233,7 @@ fn new(args: &[&str]) -> Result<@MeCab, ~str> {
 
 /// The wrapper of `mecab::mecab_new2` that may return `MeCab`.
 fn new2(arg: &str) -> Result<@MeCab, ~str> {
-    let mecab = str::as_c_str(arg, |buf| mecab::mecab_new2(buf));
+    let mecab = str::as_c_str(arg, |buf| mecab_new2(buf));
 
     if mecab.is_null() {
         Err(~"failed to create new instance")
@@ -244,9 +244,9 @@ fn new2(arg: &str) -> Result<@MeCab, ~str> {
 
 /// The wrapper of `mecab::mecab_version` that returns version-number string.
 fn version() -> ~str {
-    let vers = mecab::mecab_version();
+    let vers = mecab_version();
 
-    unsafe { unsafe::from_c_str(vers) }
+    unsafe { raw::from_c_str(vers) }
 }
 
 /// Parameters for `mecab_node_t.stat` Normal node
@@ -270,7 +270,9 @@ const EOS_NODE: u8 = 3u8;
 const EON_NODE: u8 = 4u8;
 
 // NB: Need to expand `mecab-config --libs-only-L` at linking time
-extern mod mecab {
+#[nolink]
+#[link_args = "-lmecab -lstdc++"]
+extern {
     fn mecab_new(argc: c_int, argv: **c_char) -> *mecab_t;
     fn mecab_new2(arg: *c_char) -> *mecab_t;
     fn mecab_destroy(mecab: *mecab_t);
