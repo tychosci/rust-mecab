@@ -214,7 +214,7 @@ fn new(args: &[&str]) -> Result<@MeCab, ~str> {
     let mut tmps    = ~[];
 
     for args.each |arg| {
-        let t = @arg;
+        let t = @*arg;
         vec::push(tmps, t);
         vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
     }
