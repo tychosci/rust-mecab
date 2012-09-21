@@ -137,7 +137,7 @@ impl *mecab_node_t : IMeCabNode {
 
 impl MeCabDictionaryInfo {
     /// Iterates all listed items on `mecab_dictionary_info_t`.
-    fn each(blk: &fn(IMeCabDict) -> bool) {
+    pure fn each(blk: &fn(IMeCabDict) -> bool) {
         let mut p = self.dict;
 
         while p.is_not_null() {
@@ -149,7 +149,7 @@ impl MeCabDictionaryInfo {
 
 impl MeCabNode {
     /// Iterates all listed items on `mecab_node_t`.
-    fn each(blk: &fn(IMeCabNode) -> bool) {
+    pure fn each(blk: &fn(IMeCabNode) -> bool) {
         let mut p = self.node;
 
         while p.is_not_null() {
