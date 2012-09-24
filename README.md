@@ -40,14 +40,6 @@ Examples
         io::print("\n");
     }
 
-
-TODO
-----
-
-- `mecab_model_t`
-- `mecab_lattice_t`
-- documentation
-
 License
 -------
 
