@@ -13,6 +13,12 @@ use libc::*;
 priv enum mecab_t = ();
 
 #[allow(non_camel_case_types)]
+priv enum mecab_model_t = ();
+
+#[allow(non_camel_case_types)]
+priv enum mecab_lattice_t = ();
+
+#[allow(non_camel_case_types)]
 /// Same structure of `mecab::mecab_path_t` that documented in
 /// <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 priv struct mecab_path_t {
@@ -282,6 +288,22 @@ extern {
     fn mecab_sparse_tostr2(mecab: *mecab_t, input: *c_char, len: size_t) -> *c_char;
     fn mecab_sparse_tonode(mecab: *mecab_t, input: *c_char) -> *mecab_node_t;
     fn mecab_sparse_tonode2(mecab: *mecab_t, input: *c_char, len: size_t) -> *mecab_node_t;
+    fn mecab_parse_lattice(mecab: *mecab_t, lattice: *mecab_lattice_t);
     fn mecab_dictionary_info(mecab: *mecab_t) -> *mecab_dictionary_info_t;
     fn mecab_version() -> *c_char;
+
+    fn mecab_model_new(argc: c_int, argv: **c_char) -> *mecab_model_t;
+    fn mecab_model_new2(arg: *c_char) -> *mecab_model_t;
+    fn mecab_model_new_tagger(model: *mecab_model_t) -> *mecab_t;
+    fn mecab_model_new_lattice(model: *mecab_model_t) -> *mecab_lattice_t;
+    fn mecab_model_destroy(model: *mecab_model_t);
+
+    fn mecab_lattice_set_sentence(lattice: *mecab_lattice_t, input: *c_char);
+    fn mecab_lattice_tostr(lattice: *mecab_lattice_t) -> *c_char;
+    fn mecab_lattice_get_size(lattice: *mecab_lattice_t) -> size_t;
+    fn mecab_lattice_get_bos_node(lattice: *mecab_lattice_t) -> *mecab_node_t;
+    fn mecab_lattice_get_eos_node(lattice: *mecab_lattice_t) -> *mecab_node_t;
+    fn mecab_lattice_get_begin_nodes(lattice: *mecab_lattice_t, pos: size_t) -> *mecab_node_t;
+    fn mecab_lattice_get_end_nodes(lattice: *mecab_lattice_t, pos: size_t) -> *mecab_node_t;
+    fn mecab_lattice_destroy(lattice: *mecab_lattice_t);
 }
