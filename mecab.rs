@@ -88,6 +88,18 @@ pub struct MeCab {
     drop { mecab_destroy(self.mecab); }
 }
 
+/// Wrapped structure for `mecab_model_t`.
+priv struct MeCabModel {
+    priv model: *mecab_model_t,
+    drop { mecab_model_destroy(self.model); }
+}
+
+/// Wrapped structure for `mecab_lattice_t`.
+pub struct MeCabLattice {
+    pub lattice: *mecab_lattice_t,
+    drop { mecab_lattice_destroy(self.lattice); }
+}
+
 pub trait IMeCabDict {
     pure fn get_filename() -> ~str;
     pure fn get_charset()  -> ~str;
@@ -194,6 +206,11 @@ pub impl MeCab {
         }
     }
 
+    fn parse_lattice(lattice: &MeCabLattice) -> bool {
+        let status = mecab_parse_lattice(self.mecab, lattice.lattice);
+        status != 0 as c_int
+    }
+
     /// Returns `MeCabDictionaryInfo`.
     fn get_dictionary_info() -> Result<@MeCabDictionaryInfo, ~str> {
         let dict = mecab_dictionary_info(self.mecab);
@@ -208,6 +225,70 @@ pub impl MeCab {
 
     priv fn strerror() -> ~str {
         let s = mecab_strerror(self.mecab);
+        move unsafe { raw::from_c_str(s) }
+    }
+}
+
+pub impl MeCabModel {
+    fn create_tagger() -> Result<@MeCab, ~str> {
+        let mecab = mecab_model_new_tagger(self.model);
+
+        if mecab.is_null() {
+            Err(~"failed to create new Tagger")
+        } else {
+            Ok(@MeCab{mecab: mecab})
+        }
+    }
+
+    fn create_lattice() -> Result<@MeCabLattice, ~str> {
+        let lattice = mecab_model_new_lattice(self.model);
+
+        if lattice.is_null() {
+            Err(~"failed to create new Lattice")
+        } else {
+            Ok(@MeCabLattice{lattice: lattice})
+        }
+    }
+}
+
+pub impl MeCabLattice : ToStr {
+    fn to_str() -> ~str {
+        let s = mecab_lattice_tostr(self.lattice);
+        move unsafe { raw::from_c_str(s) }
+    }
+}
+
+pub impl MeCabLattice {
+    fn set_sentence(input: &str) {
+        do str::as_c_str(input) |buf| {
+            mecab_lattice_set_sentence(self.lattice, buf);
+        }
+    }
+
+    fn get_bos_node() -> Result<@MeCabNode, ~str> {
+        let node = mecab_lattice_get_bos_node(self.lattice);
+
+        if node.is_null() {
+            let msg = self.strerror();
+            Err(move msg)
+        } else {
+            Ok(@MeCabNode{node: node})
+        }
+    }
+
+    fn get_eos_node() -> Result<@MeCabNode, ~str> {
+        let node = mecab_lattice_get_eos_node(self.lattice);
+
+        if node.is_null() {
+            let msg = self.strerror();
+            Err(move msg)
+        } else {
+            Ok(@MeCabNode{node: node})
+        }
+    }
+
+    priv fn strerror() -> ~str {
+        let s = mecab_lattice_strerror(self.lattice);
         move unsafe { raw::from_c_str(s) }
     }
 }
@@ -245,6 +326,40 @@ pub fn new2(arg: &str) -> Result<@MeCab, ~str> {
         Err(~"failed to create new instance")
     } else {
         Ok(@MeCab{mecab: mecab})
+    }
+}
+
+pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
+    let argc = args.len() as c_int;
+
+    let mut argptrs = ~[];
+    let mut tmps    = ~[];
+
+    for args.each |arg| {
+        let t = @*arg;
+        vec::push(tmps, t);
+        vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
+    }
+    vec::push(argptrs, ptr::null());
+
+    let model = vec::as_imm_buf(argptrs, |argv, _len| {
+        mecab_model_new(argc, argv)
+    });
+
+    if model.is_null() {
+        Err(~"failed to create new Model")
+    } else {
+        Ok(~MeCabModel{model: model})
+    }
+}
+
+pub fn model_new2(arg: &str) -> Result<~MeCabModel, ~str> {
+    let model = str::as_c_str(arg, |buf| mecab_model_new2(buf));
+
+    if model.is_null() {
+        Err(~"failed to create new Model")
+    } else {
+        Ok(~MeCabModel{model: model})
     }
 }
 
@@ -288,7 +403,7 @@ extern {
     fn mecab_sparse_tostr2(mecab: *mecab_t, input: *c_char, len: size_t) -> *c_char;
     fn mecab_sparse_tonode(mecab: *mecab_t, input: *c_char) -> *mecab_node_t;
     fn mecab_sparse_tonode2(mecab: *mecab_t, input: *c_char, len: size_t) -> *mecab_node_t;
-    fn mecab_parse_lattice(mecab: *mecab_t, lattice: *mecab_lattice_t);
+    fn mecab_parse_lattice(mecab: *mecab_t, lattice: *mecab_lattice_t) -> c_int;
     fn mecab_dictionary_info(mecab: *mecab_t) -> *mecab_dictionary_info_t;
     fn mecab_version() -> *c_char;
 
@@ -306,4 +421,5 @@ extern {
     fn mecab_lattice_get_begin_nodes(lattice: *mecab_lattice_t, pos: size_t) -> *mecab_node_t;
     fn mecab_lattice_get_end_nodes(lattice: *mecab_lattice_t, pos: size_t) -> *mecab_node_t;
     fn mecab_lattice_destroy(lattice: *mecab_lattice_t);
+    fn mecab_lattice_strerror(lattice: *mecab_lattice_t) -> *c_char;
 }
