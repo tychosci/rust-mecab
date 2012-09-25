@@ -23,6 +23,8 @@ wakachigaki: setup-bin libmecab $(E)/wakachigaki.rs
 katakanize: setup-bin libmecab $(E)/katakanize.rs
 	rustc -O $(E)/katakanize.rs -L $(LIBDIR) --out-dir $(BINDIR)
 
+multithread-simple: setup-bin libmecab $(E)/multithread-simple.rs
+	rustc -O $(E)/multithread-simple.rs -L $(LIBDIR) --out-dir $(BINDIR)
 
 setup-bin:
 	mkdir -p $(BINDIR)
