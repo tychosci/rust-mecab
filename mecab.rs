@@ -206,6 +206,7 @@ pub impl MeCab {
         }
     }
 
+    /// Parses input in given `lattice` and returns true on success.
     fn parse_lattice(lattice: &MeCabLattice) -> bool {
         let status = mecab_parse_lattice(self.mecab, lattice.lattice);
         status != 0 as c_int
@@ -230,6 +231,7 @@ pub impl MeCab {
 }
 
 pub impl MeCabModel {
+    /// Creates new tagger.
     fn create_tagger() -> Result<@MeCab, ~str> {
         let mecab = mecab_model_new_tagger(self.model);
 
@@ -240,6 +242,7 @@ pub impl MeCabModel {
         }
     }
 
+    /// Creates new lattice.
     fn create_lattice() -> Result<@MeCabLattice, ~str> {
         let lattice = mecab_model_new_lattice(self.model);
 
@@ -259,12 +262,14 @@ pub impl MeCabLattice : ToStr {
 }
 
 pub impl MeCabLattice {
+    /// Set input of the lattice.
     fn set_sentence(input: &str) {
         do str::as_c_str(input) |buf| {
             mecab_lattice_set_sentence(self.lattice, buf);
         }
     }
 
+    /// Returns the beginning node of the sentence on success.
     fn get_bos_node() -> Result<@MeCabNode, ~str> {
         let node = mecab_lattice_get_bos_node(self.lattice);
 
@@ -276,6 +281,7 @@ pub impl MeCabLattice {
         }
     }
 
+    /// Returns the end node of the sentence on success.
     fn get_eos_node() -> Result<@MeCabNode, ~str> {
         let node = mecab_lattice_get_eos_node(self.lattice);
 
@@ -329,6 +335,8 @@ pub fn new2(arg: &str) -> Result<@MeCab, ~str> {
     }
 }
 
+/// The wrapper of `mecab::mecab_model_new` that
+/// may return uniquely managed `MeCabModel`.
 pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
     let argc = args.len() as c_int;
 
@@ -353,6 +361,8 @@ pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
     }
 }
 
+/// The wrapper of `mecab::mecab_model_new2` that
+/// may return uniquely managed `MeCabModel`.
 pub fn model_new2(arg: &str) -> Result<~MeCabModel, ~str> {
     let model = str::as_c_str(arg, |buf| mecab_model_new2(buf));
 
