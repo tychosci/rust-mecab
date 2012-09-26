@@ -26,6 +26,9 @@ katakanize: setup-bin libmecab $(E)/katakanize.rs
 multithread-simple: setup-bin libmecab $(E)/multithread-simple.rs
 	rustc -O $(E)/multithread-simple.rs -L $(LIBDIR) --out-dir $(BINDIR)
 
+collect-nouns: setup-bin libmecab $(E)/collect-nouns.rs
+	rustc -O $(E)/collect-nouns.rs -L $(LIBDIR) --out-dir $(BINDIR)
+
 setup-bin:
 	mkdir -p $(BINDIR)
 
