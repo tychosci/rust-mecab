@@ -17,7 +17,7 @@ fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
         if status == NOR_NODE || status == UNK_NODE {
             let feature = n.get_feature();
             if str::eq_slice(feature.split_str(",")[0], "名詞") {
-                vec::push(v, n.get_surface());
+                v.push(n.get_surface());
             }
         }
     }
@@ -30,7 +30,7 @@ fn run_collector(collector: &pipes::PortSet<~[~str]>, n: uint) -> ~[~str] {
     let mut nouns = ~[];
     while n > 0 {
         match collector.try_recv() {
-            Some(move v) => vec::push_all_move(nouns, v),
+            Some(move v) => nouns.push_all_move(v),
             None => n -= 1
         }
     }

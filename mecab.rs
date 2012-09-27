@@ -308,10 +308,10 @@ pub fn new(args: &[&str]) -> Result<@MeCab, ~str> {
 
     for args.each |arg| {
         let t = @*arg;
-        vec::push(tmps, t);
-        vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
+        tmps.push(t);
+        argptrs.push_all(str::as_c_str(*t, |b| ~[b]));
     }
-    vec::push(argptrs, ptr::null());
+    argptrs.push(ptr::null());
 
     let mecab = vec::as_imm_buf(argptrs, |argv, _len| {
         mecab_new(argc, argv)
@@ -345,10 +345,10 @@ pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
 
     for args.each |arg| {
         let t = @*arg;
-        vec::push(tmps, t);
-        vec::push_all(argptrs, str::as_c_str(*t, |b| ~[b]));
+        tmps.push(t);
+        argptrs.push_all(str::as_c_str(*t, |b| ~[b]));
     }
-    vec::push(argptrs, ptr::null());
+    argptrs.push(ptr::null());
 
     let model = vec::as_imm_buf(argptrs, |argv, _len| {
         mecab_model_new(argc, argv)
