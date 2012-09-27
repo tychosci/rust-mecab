@@ -7,7 +7,7 @@ This binding is licensed under the same license of MeCab.
 */
 
 #[link(name = "mecab",
-       vers = "0.1",
+       vers = "0.2",
        uuid = "157601c8-818c-4898-b1dc-890eeeab4936",
        url  = "https://github.com/tychosci/rust-mecab")];
 
