@@ -6,19 +6,13 @@ fn test_mecab_version() {
 
 #[test]
 fn test_mecab_new() {
-    let status = match new(["test_mecab_new"]) {
-        Ok(_)  => true,
-        Err(_) => false,
-    };
+    let status = new(["test_mecab_new"]).is_ok();
     assert status;
 }
 
 #[test]
 fn test_mecab_new2() {
-    let status = match new2("") {
-        Ok(_)  => true,
-        Err(_) => false,
-    };
+    let status = new2("").is_ok();
     assert status;
 }
 
