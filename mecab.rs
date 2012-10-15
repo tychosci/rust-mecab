@@ -255,9 +255,11 @@ pub impl MeCabModel {
 }
 
 pub impl MeCabLattice : ToStr {
-    fn to_str() -> ~str {
-        let s = mecab_lattice_tostr(self.lattice);
-        move unsafe { raw::from_c_str(s) }
+    pure fn to_str() -> ~str {
+        unsafe {
+            let s = mecab_lattice_tostr(self.lattice);
+            raw::from_c_str(s)
+        }
     }
 }
 
