@@ -30,7 +30,7 @@ fn run_collector(collector: &pipes::PortSet<~[~str]>, n: uint) -> ~[~str] {
     let mut nouns = ~[];
     while n > 0 {
         match collector.try_recv() {
-            Some(move v) => nouns.push_all_move(v),
+            Some(move v) => nouns.push_all_move(move v),
             None => n -= 1
         }
     }
@@ -54,9 +54,9 @@ fn main() {
         let model = ~arc::clone(model);
 
         let (c, p) = pipes::stream();
-        collector.add(p);
+        collector.add(move p);
 
-        do task::spawn |move model| {
+        do task::spawn |move model, move c| {
             let model = arc::get(model);
             let tagger = model.create_tagger().get();
             let lattice = model.create_lattice().get();
