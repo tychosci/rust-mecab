@@ -18,9 +18,11 @@ priv enum mecab_model_t = ();
 #[allow(non_camel_case_types)]
 priv enum mecab_lattice_t = ();
 
+/**
+Same structure of `mecab::mecab_path_t` that documented in
+<http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
+*/
 #[allow(non_camel_case_types)]
-/// Same structure of `mecab::mecab_path_t` that documented in
-/// <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 priv struct mecab_path_t {
     rnode: *mecab_node_t,
     rnext: *mecab_path_t,
@@ -30,9 +32,11 @@ priv struct mecab_path_t {
     prob:   c_float,
 }
 
+/**
+Same structure of `mecab::mecab_node_t` that documented in
+<http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
+*/
 #[allow(non_camel_case_types)]
-/// Same structure of `mecab::mecab_node_t` that documented in
-/// <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
 priv struct mecab_node_t {
     prev:      *mecab_node_t,
     next:      *mecab_node_t,
@@ -58,9 +62,11 @@ priv struct mecab_node_t {
     cost:       c_long,
 }
 
+/**
+Same structure of `mecab::mecab_dictionary_info_t` that documented in
+<http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
+*/
 #[allow(non_camel_case_types)]
-/// Same structure of `mecab::mecab_dictionary_info_t` that documented in
-/// <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
 priv struct mecab_dictionary_info_t {
     filename: *c_char,
     charset:  *c_char,
@@ -337,8 +343,10 @@ pub fn new2(arg: &str) -> Result<@MeCab, ~str> {
     }
 }
 
-/// The wrapper of `mecab::mecab_model_new` that
-/// may return uniquely managed `MeCabModel`.
+/**
+The wrapper of `mecab::mecab_model_new` that
+may return uniquely managed `MeCabModel`.
+*/
 pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
     let argc = args.len() as c_int;
 
@@ -363,8 +371,10 @@ pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
     }
 }
 
-/// The wrapper of `mecab::mecab_model_new2` that
-/// may return uniquely managed `MeCabModel`.
+/**
+The wrapper of `mecab::mecab_model_new2` that
+may return uniquely managed `MeCabModel`.
+*/
 pub fn model_new2(arg: &str) -> Result<~MeCabModel, ~str> {
     let model = str::as_c_str(arg, |buf| mecab_model_new2(buf));
 
@@ -375,31 +385,44 @@ pub fn model_new2(arg: &str) -> Result<~MeCabModel, ~str> {
     }
 }
 
-/// The wrapper of `mecab::mecab_version` that returns version-number string.
+/**
+The wrapper of `mecab::mecab_version` that
+returns version-number string.
+*/
 pub fn version() -> ~str {
     let vers = mecab_version();
 
     move unsafe { raw::from_c_str(vers) }
 }
 
-/// Parameters for `mecab_node_t.stat` Normal node
-/// defined in the dictionary.
+/**
+Parameters for `mecab_node_t.stat` Normal node
+defined in the dictionary.
+*/
 pub const NOR_NODE: u8 = 0u8;
 
-/// Parameters for `mecab_node_t.stat` Unknown node
-/// not defined in the dictionary.
+/**
+Parameters for `mecab_node_t.stat` Unknown node
+not defined in the dictionary.
+*/
 pub const UNK_NODE: u8 = 1u8;
 
-/// Parameters for `mecab_node_t.stat` Virtual node
-/// representing a beginning of the sentence.
+/**
+Parameters for `mecab_node_t.stat` Virtual node
+representing a beginning of the sentence.
+*/
 pub const BOS_NODE: u8 = 2u8;
 
-/// Parameters for `mecab_node_t.stat` Virtual node
-/// representing a end of the sentence.
+/**
+Parameters for `mecab_node_t.stat` Virtual node
+representing a end of the sentence.
+*/
 pub const EOS_NODE: u8 = 3u8;
 
-/// Parameters for `mecab_node_t.stat` Virtual node
-/// representing a end of the N-best enumeration.
+/**
+Parameters for `mecab_node_t.stat` Virtual node
+representing a end of the N-best enumeration.
+*/
 pub const EON_NODE: u8 = 4u8;
 
 // NB: Need to expand `mecab-config --libs-only-L` at linking time
