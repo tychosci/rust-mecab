@@ -8,7 +8,7 @@ use mecab::NOR_NODE;
 use mecab::UNK_NODE;
 
 fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
-    let mut v = ~[];
+    let mut v = dvec::DVec();
 
     let node = lattice.get_bos_node().get();
     for node.each |n| {
@@ -17,12 +17,12 @@ fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
         if status == NOR_NODE || status == UNK_NODE {
             let feature = n.get_feature();
             if str::eq_slice(feature.split_str(",")[0], "名詞") {
-                v.push(n.get_surface());
+                v.push(move n.get_surface());
             }
         }
     }
 
-    move v
+    dvec::unwrap(move v)
 }
 
 fn run_collector(collector: &pipes::PortSet<~[~str]>, n: uint) -> ~[~str] {
