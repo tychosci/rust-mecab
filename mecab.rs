@@ -161,7 +161,7 @@ pub impl *mecab_node_t : IMeCabNode {
 
 pub impl MeCabDictionaryInfo {
     /// Iterates all listed items on `mecab_dictionary_info_t`.
-    pure fn each(blk: &fn(IMeCabDict) -> bool) {
+    pure fn each(&self, blk: &fn(IMeCabDict) -> bool) {
         let mut p = self.dict;
 
         while p.is_not_null() {
@@ -173,7 +173,7 @@ pub impl MeCabDictionaryInfo {
 
 pub impl MeCabNode {
     /// Iterates all listed items on `mecab_node_t`.
-    pure fn each(blk: &fn(IMeCabNode) -> bool) {
+    pure fn each(&self, blk: &fn(IMeCabNode) -> bool) {
         let mut p = self.node;
 
         while p.is_not_null() {
@@ -185,7 +185,7 @@ pub impl MeCabNode {
 
 pub impl MeCab {
     /// Parses input and may return the string of result.
-    fn parse(input: &str) -> Result<~str, ~str> {
+    fn parse(&self, input: &str) -> Result<~str, ~str> {
         let s = str::as_c_str(input, |buf| {
             mecab_sparse_tostr(self.mecab, buf)
         });
@@ -199,7 +199,7 @@ pub impl MeCab {
     }
 
     /// Parses input and may return `MeCabNode`.
-    fn parse_to_node(input: &str) -> Result<@MeCabNode, ~str> {
+    fn parse_to_node(&self, input: &str) -> Result<@MeCabNode, ~str> {
         let node = str::as_c_str(input, |buf| {
             mecab_sparse_tonode(self.mecab, buf)
         });
@@ -213,13 +213,13 @@ pub impl MeCab {
     }
 
     /// Parses input in given `lattice` and returns true on success.
-    fn parse_lattice(lattice: &MeCabLattice) -> bool {
+    fn parse_lattice(&self, lattice: &MeCabLattice) -> bool {
         let status = mecab_parse_lattice(self.mecab, lattice.lattice);
         status != 0 as c_int
     }
 
     /// Returns `MeCabDictionaryInfo`.
-    fn get_dictionary_info() -> Result<@MeCabDictionaryInfo, ~str> {
+    fn get_dictionary_info(&self) -> Result<@MeCabDictionaryInfo, ~str> {
         let dict = mecab_dictionary_info(self.mecab);
 
         if dict.is_null() {
@@ -230,7 +230,7 @@ pub impl MeCab {
         }
     }
 
-    priv fn strerror() -> ~str {
+    priv fn strerror(&self) -> ~str {
         let s = mecab_strerror(self.mecab);
         move unsafe { raw::from_c_str(s) }
     }
@@ -238,7 +238,7 @@ pub impl MeCab {
 
 pub impl MeCabModel {
     /// Creates new tagger.
-    fn create_tagger() -> Result<@MeCab, ~str> {
+    fn create_tagger(&self) -> Result<@MeCab, ~str> {
         let mecab = mecab_model_new_tagger(self.model);
 
         if mecab.is_null() {
@@ -249,7 +249,7 @@ pub impl MeCabModel {
     }
 
     /// Creates new lattice.
-    fn create_lattice() -> Result<@MeCabLattice, ~str> {
+    fn create_lattice(&self) -> Result<@MeCabLattice, ~str> {
         let lattice = mecab_model_new_lattice(self.model);
 
         if lattice.is_null() {
@@ -271,14 +271,14 @@ pub impl MeCabLattice : ToStr {
 
 pub impl MeCabLattice {
     /// Set input of the lattice.
-    fn set_sentence(input: &str) {
+    fn set_sentence(&self, input: &str) {
         do str::as_c_str(input) |buf| {
             mecab_lattice_set_sentence(self.lattice, buf);
         }
     }
 
     /// Returns the beginning node of the sentence on success.
-    fn get_bos_node() -> Result<@MeCabNode, ~str> {
+    fn get_bos_node(&self) -> Result<@MeCabNode, ~str> {
         let node = mecab_lattice_get_bos_node(self.lattice);
 
         if node.is_null() {
@@ -290,7 +290,7 @@ pub impl MeCabLattice {
     }
 
     /// Returns the end node of the sentence on success.
-    fn get_eos_node() -> Result<@MeCabNode, ~str> {
+    fn get_eos_node(&self) -> Result<@MeCabNode, ~str> {
         let node = mecab_lattice_get_eos_node(self.lattice);
 
         if node.is_null() {
@@ -301,7 +301,7 @@ pub impl MeCabLattice {
         }
     }
 
-    priv fn strerror() -> ~str {
+    priv fn strerror(&self) -> ~str {
         let s = mecab_lattice_strerror(self.lattice);
         move unsafe { raw::from_c_str(s) }
     }
