@@ -21,20 +21,7 @@ fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
             }
         }
     }
-
     dvec::unwrap(move v)
-}
-
-fn run_collector(collector: &pipes::PortSet<~[~str]>, n: uint) -> ~[~str] {
-    let mut n = n;
-    let mut nouns = ~[];
-    while n > 0 {
-        match collector.try_recv() {
-            Some(move v) => nouns.push_all_move(move v),
-            None => n -= 1
-        }
-    }
-    move nouns
 }
 
 fn main() {
@@ -47,14 +34,13 @@ fn main() {
     let model = result::unwrap(mecab::model_new2(""));
     let model = ~arc::ARC(move model);
 
-    let collector = &pipes::PortSet();
+    let (c, p) = pipes::stream();
+    let c = pipes::SharedChan(move c);
 
     for sentences.each |sentence| {
         let sentence = *sentence;
         let model = ~arc::clone(model);
-
-        let (c, p) = pipes::stream();
-        collector.add(move p);
+        let c = c.clone();
 
         do task::spawn |move model, move c| {
             let model = arc::get(model);
@@ -69,8 +55,10 @@ fn main() {
         }
     }
 
-    let nouns = run_collector(collector, sentences.len());
-    for nouns.each |noun| {
-        io::println(fmt!("noun: %s", *noun));
+    for sentences.len().times {
+        let nouns = p.recv();
+        for nouns.each |noun| {
+            io::println(fmt!("noun: %s", *noun));
+        }
     }
 }
