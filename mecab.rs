@@ -124,9 +124,9 @@ pub trait IMeCabNode {
 
 pub impl *mecab_dictionary_info_t : IMeCabDict {
     /// Returns `mecab_dictionary_info_t.filename`.
-    pure fn get_filename() -> ~str { move unsafe { raw::from_c_str((*self).filename) } }
+    pure fn get_filename() -> ~str { unsafe { raw::from_c_str((*self).filename) } }
     /// Returns `mecab_dictionary_info_t.charset`.
-    pure fn get_charset()  -> ~str { move unsafe { raw::from_c_str((*self).charset)  } }
+    pure fn get_charset()  -> ~str { unsafe { raw::from_c_str((*self).charset)  } }
     /// Returns `mecab_dictionary_info_t.size`.
     pure fn get_size()     -> uint { unsafe { (*self).size    as uint } }
     /// Returns `mecab_dictionary_info_t.type`.
@@ -142,7 +142,7 @@ pub impl *mecab_dictionary_info_t : IMeCabDict {
 pub impl *mecab_node_t : IMeCabNode {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface() -> ~str {
-        move unsafe {
+        unsafe {
             let s = raw::from_c_str((*self).surface);
             str::slice(s, 0, (*self).length as uint)
         }
@@ -150,7 +150,7 @@ pub impl *mecab_node_t : IMeCabNode {
 
     /// Returns `mecab_node_t.feature`.
     pure fn get_feature() -> ~str {
-        move unsafe { raw::from_c_str((*self).feature) }
+        unsafe { raw::from_c_str((*self).feature) }
     }
 
     /// Returns `mecab_node_t.status`.
@@ -194,7 +194,7 @@ pub impl MeCab {
             let msg = self.strerror();
             Err(move msg)
         } else {
-            Ok(move unsafe { raw::from_c_str(s) })
+            Ok(unsafe { raw::from_c_str(s) })
         }
     }
 
@@ -232,7 +232,7 @@ pub impl MeCab {
 
     priv fn strerror(&self) -> ~str {
         let s = mecab_strerror(self.mecab);
-        move unsafe { raw::from_c_str(s) }
+        unsafe { raw::from_c_str(s) }
     }
 }
 
@@ -303,7 +303,7 @@ pub impl MeCabLattice {
 
     priv fn strerror(&self) -> ~str {
         let s = mecab_lattice_strerror(self.lattice);
-        move unsafe { raw::from_c_str(s) }
+        unsafe { raw::from_c_str(s) }
     }
 }
 
@@ -392,7 +392,7 @@ returns version-number string.
 pub fn version() -> ~str {
     let vers = mecab_version();
 
-    move unsafe { raw::from_c_str(vers) }
+    unsafe { raw::from_c_str(vers) }
 }
 
 /**
