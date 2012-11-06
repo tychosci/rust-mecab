@@ -10,13 +10,13 @@ use str::raw;
 use libc::*;
 
 #[allow(non_camel_case_types)]
-priv enum mecab_t = ();
+priv struct mecab_t;
 
 #[allow(non_camel_case_types)]
-priv enum mecab_model_t = ();
+priv struct mecab_model_t;
 
 #[allow(non_camel_case_types)]
-priv enum mecab_lattice_t = ();
+priv struct mecab_lattice_t;
 
 /**
 Same structure of `mecab::mecab_path_t` that documented in
