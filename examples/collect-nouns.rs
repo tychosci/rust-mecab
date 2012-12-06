@@ -37,8 +37,7 @@ fn main() {
     let (c, p) = pipes::stream();
     let c = pipes::SharedChan(move c);
 
-    for sentences.each |sentence| {
-        let sentence = *sentence;
+    for sentences.each |&sentence| {
         let model = ~arc::clone(model);
         let c = c.clone();
 

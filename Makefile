@@ -4,7 +4,7 @@ E        := examples
 BINDIR   := bin
 LIBDIR   := lib
 TESTDIR  := test
-SOURCES  := mecab.rc mecab.rs
+SOURCES  := mecab.rc
 LIB_DEPS := $(shell mecab-config --libs-only-L)
 
 .PHONY: all

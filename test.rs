@@ -37,8 +37,8 @@ fn test_mecab_parse() {
     let mecab = new2("").get();
 
     match mecab.parse("この文はテストです") {
-        Ok(ref s)    => io::println(fmt!("%s", *s)),
-        Err(ref msg) => fail *msg
+        Ok(ref s)     => io::println(fmt!("%s", *s)),
+        Err(move msg) => fail msg
     }
 }
 
