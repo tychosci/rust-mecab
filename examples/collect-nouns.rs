@@ -21,7 +21,7 @@ fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
             }
         }
     }
-    dvec::unwrap(move v)
+    dvec::unwrap(v)
 }
 
 fn main() {
@@ -32,10 +32,10 @@ fn main() {
     ];
 
     let model = result::unwrap(mecab::model_new2(""));
-    let model = ~arc::ARC(move model);
+    let model = ~arc::ARC(model);
 
     let (c, p) = pipes::stream();
-    let c = pipes::SharedChan(move c);
+    let c = pipes::SharedChan(c);
 
     for sentences.each |&sentence| {
         let model = ~arc::clone(model);

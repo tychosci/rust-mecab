@@ -276,7 +276,7 @@ pub impl MeCab {
 
         if s.is_null() {
             let msg = self.strerror();
-            Err(move msg)
+            Err(msg)
         } else {
             Ok(unsafe { raw::from_c_str(s) })
         }
@@ -290,7 +290,7 @@ pub impl MeCab {
 
         if node.is_null() {
             let msg = self.strerror();
-            Err(move msg)
+            Err(msg)
         } else {
             Ok(@MeCabNode{node: node})
         }
@@ -311,7 +311,7 @@ pub impl MeCab {
 
             if dict.is_null() {
                 let msg = self.strerror();
-                Err(move msg)
+                Err(msg)
             } else {
                 Ok(@MeCabDictionaryInfo{dict: dict})
             }
@@ -378,7 +378,7 @@ pub impl MeCabLattice {
 
             if node.is_null() {
                 let msg = self.strerror();
-                Err(move msg)
+                Err(msg)
             } else {
                 Ok(@MeCabNode{node: node})
             }
@@ -392,7 +392,7 @@ pub impl MeCabLattice {
 
             if node.is_null() {
                 let msg = self.strerror();
-                Err(move msg)
+                Err(msg)
             } else {
                 Ok(@MeCabNode{node: node})
             }
