@@ -34,7 +34,7 @@ fn main() {
     let model = result::unwrap(mecab::model_new2(""));
     let model = ~arc::ARC(model);
 
-    let (c, p) = pipes::stream();
+    let (p, c) = pipes::stream();
     let c = pipes::SharedChan(c);
 
     for sentences.each |&sentence| {
