@@ -8,7 +8,7 @@ use mecab::NOR_NODE;
 use mecab::UNK_NODE;
 
 fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
-    let mut v = dvec::DVec();
+    let mut v = ~[];
 
     let node = lattice.get_bos_node().get();
     for node.each |n| {
@@ -21,7 +21,7 @@ fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
             }
         }
     }
-    dvec::unwrap(v)
+    return v;
 }
 
 fn main() {
