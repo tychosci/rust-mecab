@@ -11,7 +11,7 @@ fn main() {
     for 2.times {
         let model = ~arc::clone(model);
 
-        do task::spawn |move model| {
+        do task::spawn {
             let model = arc::get(model);
             let tagger = model.create_tagger().get();
             let lattice = model.create_lattice().get();
