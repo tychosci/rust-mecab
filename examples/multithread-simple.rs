@@ -5,7 +5,7 @@ use std::arc;
 
 fn main() {
     let s = "これはテストです";
-    let model = result::unwrap(mecab::model_new2(""));
+    let model = mecab::model_new2("").unwrap();
     let model = ~arc::ARC(model);
 
     for 2.times {

@@ -31,7 +31,7 @@ fn main() {
         "昨日の夕食はカレーでした",
     ];
 
-    let model = result::unwrap(mecab::model_new2(""));
+    let model = mecab::model_new2("").unwrap();
     let model = ~arc::ARC(model);
 
     let (p, c) = pipes::stream();
