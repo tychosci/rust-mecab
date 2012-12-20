@@ -159,11 +159,13 @@ pub const EON_NODE: u8 = 4u8;
 /// Wrapped structure for `mecab_dictionary_info_t`.
 pub struct MeCabDictionaryInfo {
     priv dict: *mecab_dictionary_info_t,
+    drop {}
 }
 
 /// Wrapped structure for `mecab_node_t`.
 pub struct MeCabNode {
     priv node: *mecab_node_t,
+    drop {}
 }
 
 /// Wrapped structure for `mecab_t`.
