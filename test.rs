@@ -18,8 +18,8 @@ fn test_mecab_new2() {
 
 #[test]
 fn test_mecab_dictionary_info() {
-    let mecab = new2("").get();
-    let dict  = mecab.get_dictionary_info().get();
+    let mecab = new2("").unwrap();
+    let dict  = mecab.get_dictionary_info().unwrap();
 
     for dict.each |d| {
         io::println(fmt!("filename: %s", d.get_filename()));
@@ -34,7 +34,7 @@ fn test_mecab_dictionary_info() {
 
 #[test]
 fn test_mecab_parse() {
-    let mecab = new2("").get();
+    let mecab = new2("").unwrap();
 
     match mecab.parse("この文はテストです") {
         Ok(s)    => io::println(fmt!("%s", s)),
@@ -44,8 +44,8 @@ fn test_mecab_parse() {
 
 #[test]
 fn test_mecab_parse_to_node() {
-    let mecab = new2("").get();
-    let node  = mecab.parse_to_node("この文はテストです").get();
+    let mecab = new2("").unwrap();
+    let node  = mecab.parse_to_node("この文はテストです").unwrap();
 
     for node.each |n| {
         let status = n.get_status();

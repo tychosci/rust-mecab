@@ -13,12 +13,12 @@ fn main() {
 
         do task::spawn {
             let model = arc::get(model);
-            let tagger = model.create_tagger().get();
-            let lattice = model.create_lattice().get();
+            let tagger = model.create_tagger().unwrap();
+            let lattice = model.create_lattice().unwrap();
 
             lattice.set_sentence(s);
 
-            if tagger.parse_lattice(lattice) {
+            if tagger.parse_lattice(&lattice) {
                 io::println("result: ");
                 io::println(fmt!("%s", lattice.to_str()));
             }
@@ -26,12 +26,12 @@ fn main() {
     }
 
     let model = arc::get(model);
-    let tagger = model.create_tagger().get();
-    let lattice = model.create_lattice().get();
+    let tagger = model.create_tagger().unwrap();
+    let lattice = model.create_lattice().unwrap();
 
     lattice.set_sentence(s);
 
-    if tagger.parse_lattice(lattice) {
+    if tagger.parse_lattice(&lattice) {
         io::println("result: ");
         io::println(fmt!("%s", lattice.to_str()));
     }

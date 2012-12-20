@@ -283,7 +283,7 @@ pub impl MeCab {
     }
 
     /// Parses input and may return `MeCabNode`.
-    fn parse_to_node(&self, input: &str) -> Result<@MeCabNode, ~str> {
+    fn parse_to_node(&self, input: &str) -> Result<MeCabNode, ~str> {
         let node = str::as_c_str(input, |buf| unsafe {
             mecab_sparse_tonode(self.mecab, buf)
         });
@@ -292,7 +292,7 @@ pub impl MeCab {
             let msg = self.strerror();
             Err(msg)
         } else {
-            Ok(@MeCabNode{node: node})
+            Ok(MeCabNode{node: node})
         }
     }
 
@@ -305,7 +305,7 @@ pub impl MeCab {
     }
 
     /// Returns `MeCabDictionaryInfo`.
-    fn get_dictionary_info(&self) -> Result<@MeCabDictionaryInfo, ~str> {
+    fn get_dictionary_info(&self) -> Result<MeCabDictionaryInfo, ~str> {
         unsafe {
             let dict = mecab_dictionary_info(self.mecab);
 
@@ -313,7 +313,7 @@ pub impl MeCab {
                 let msg = self.strerror();
                 Err(msg)
             } else {
-                Ok(@MeCabDictionaryInfo{dict: dict})
+                Ok(MeCabDictionaryInfo{dict: dict})
             }
         }
     }
@@ -328,27 +328,27 @@ pub impl MeCab {
 
 pub impl MeCabModel {
     /// Creates new tagger.
-    fn create_tagger(&self) -> Result<@MeCab, ~str> {
+    fn create_tagger(&self) -> Result<MeCab, ~str> {
         unsafe {
             let mecab = mecab_model_new_tagger(self.model);
 
             if mecab.is_null() {
                 Err(~"failed to create new Tagger")
             } else {
-                Ok(@MeCab{mecab: mecab})
+                Ok(MeCab{mecab: mecab})
             }
         }
     }
 
     /// Creates new lattice.
-    fn create_lattice(&self) -> Result<@MeCabLattice, ~str> {
+    fn create_lattice(&self) -> Result<MeCabLattice, ~str> {
         unsafe {
             let lattice = mecab_model_new_lattice(self.model);
 
             if lattice.is_null() {
                 Err(~"failed to create new Lattice")
             } else {
-                Ok(@MeCabLattice{lattice: lattice})
+                Ok(MeCabLattice{lattice: lattice})
             }
         }
     }
@@ -372,7 +372,7 @@ pub impl MeCabLattice {
     }
 
     /// Returns the beginning node of the sentence on success.
-    fn get_bos_node(&self) -> Result<@MeCabNode, ~str> {
+    fn get_bos_node(&self) -> Result<MeCabNode, ~str> {
         unsafe {
             let node = mecab_lattice_get_bos_node(self.lattice);
 
@@ -380,13 +380,13 @@ pub impl MeCabLattice {
                 let msg = self.strerror();
                 Err(msg)
             } else {
-                Ok(@MeCabNode{node: node})
+                Ok(MeCabNode{node: node})
             }
         }
     }
 
     /// Returns the end node of the sentence on success.
-    fn get_eos_node(&self) -> Result<@MeCabNode, ~str> {
+    fn get_eos_node(&self) -> Result<MeCabNode, ~str> {
         unsafe {
             let node = mecab_lattice_get_eos_node(self.lattice);
 
@@ -394,7 +394,7 @@ pub impl MeCabLattice {
                 let msg = self.strerror();
                 Err(msg)
             } else {
-                Ok(@MeCabNode{node: node})
+                Ok(MeCabNode{node: node})
             }
         }
     }
@@ -408,7 +408,7 @@ pub impl MeCabLattice {
 }
 
 /// The wrapper of `mecab::mecab_new` that may return `MeCab`.
-pub fn new(args: &[&str]) -> Result<@MeCab, ~str> {
+pub fn new(args: &[&str]) -> Result<MeCab, ~str> {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
@@ -428,12 +428,12 @@ pub fn new(args: &[&str]) -> Result<@MeCab, ~str> {
     if mecab.is_null() {
         Err(~"failed to create new instance")
     } else {
-        Ok(@MeCab{mecab: mecab})
+        Ok(MeCab{mecab: mecab})
     }
 }
 
 /// The wrapper of `mecab::mecab_new2` that may return `MeCab`.
-pub fn new2(arg: &str) -> Result<@MeCab, ~str> {
+pub fn new2(arg: &str) -> Result<MeCab, ~str> {
     let mecab = str::as_c_str(arg, |buf| unsafe {
         mecab_new2(buf)
     });
@@ -441,7 +441,7 @@ pub fn new2(arg: &str) -> Result<@MeCab, ~str> {
     if mecab.is_null() {
         Err(~"failed to create new instance")
     } else {
-        Ok(@MeCab{mecab: mecab})
+        Ok(MeCab{mecab: mecab})
     }
 }
 

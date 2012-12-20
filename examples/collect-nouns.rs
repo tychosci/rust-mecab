@@ -10,7 +10,7 @@ use mecab::UNK_NODE;
 fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
     let mut v = ~[];
 
-    let node = lattice.get_bos_node().get();
+    let node = lattice.get_bos_node().unwrap();
     for node.each |n| {
         let status = n.get_status();
 
@@ -43,13 +43,13 @@ fn main() {
 
         do task::spawn {
             let model = arc::get(model);
-            let tagger = model.create_tagger().get();
-            let lattice = model.create_lattice().get();
+            let tagger = model.create_tagger().unwrap();
+            let lattice = model.create_lattice().unwrap();
 
             lattice.set_sentence(sentence);
 
-            if tagger.parse_lattice(lattice) {
-                c.send(collect_nouns(lattice));
+            if tagger.parse_lattice(&lattice) {
+                c.send(collect_nouns(&lattice));
             }
         }
     }
