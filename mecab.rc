@@ -17,8 +17,8 @@ This binding is licensed under the same license of MeCab.
 
 extern mod std;
 
-use str::raw;
-use libc::*;
+use core::str::raw;
+use core::libc::*;
 
 #[cfg(test)]
 mod test;
