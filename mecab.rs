@@ -368,8 +368,8 @@ pub impl MeCabLattice : ToStr {
 pub impl MeCabLattice {
     /// Set input of the lattice.
     fn set_sentence(&self, input: &str) {
-        do str::as_c_str(input) |buf| unsafe {
-            mecab_lattice_set_sentence(self.lattice, buf);
+        do str::as_c_str(input) |buf| {
+            unsafe { mecab_lattice_set_sentence(self.lattice, buf); }
         }
     }
 
