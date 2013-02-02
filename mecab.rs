@@ -208,7 +208,7 @@ pub trait IMeCabNode {
     pure fn get_status(&self)  ->   u8;
 }
 
-pub impl *mecab_dictionary_info_t : IMeCabDict {
+pub impl IMeCabDict for *mecab_dictionary_info_t {
     /// Returns `mecab_dictionary_info_t.filename`.
     pure fn get_filename(&self) -> ~str { unsafe { raw::from_c_str((**self).filename) } }
     /// Returns `mecab_dictionary_info_t.charset`.
@@ -225,7 +225,7 @@ pub impl *mecab_dictionary_info_t : IMeCabDict {
     pure fn get_version(&self)  -> uint { unsafe { (**self).version as uint } }
 }
 
-pub impl *mecab_node_t : IMeCabNode {
+pub impl IMeCabNode for *mecab_node_t {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface(&self) -> ~str {
         unsafe {
@@ -356,7 +356,7 @@ pub impl MeCabModel {
     }
 }
 
-pub impl MeCabLattice : ToStr {
+pub impl ToStr for MeCabLattice {
     pure fn to_str() -> ~str {
         unsafe {
             let s = mecab_lattice_tostr(self.lattice);
