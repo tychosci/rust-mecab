@@ -158,36 +158,51 @@ pub const EON_NODE: u8 = 4u8;
 
 /// Wrapped structure for `mecab_dictionary_info_t`.
 pub struct MeCabDictionaryInfo {
-    priv dict: *mecab_dictionary_info_t,
-    drop {}
+    priv dict: *mecab_dictionary_info_t
 }
 
 /// Wrapped structure for `mecab_node_t`.
 pub struct MeCabNode {
-    priv node: *mecab_node_t,
-    drop {}
+    priv node: *mecab_node_t
 }
 
 /// Wrapped structure for `mecab_t`.
 pub struct MeCab {
-    priv mecab: *mecab_t,
-    drop {
-        unsafe { mecab_destroy(self.mecab); }
-    }
+    priv mecab: *mecab_t
 }
 
 /// Wrapped structure for `mecab_model_t`.
 pub struct MeCabModel {
-    priv model: *mecab_model_t,
-    drop {
-        unsafe { mecab_model_destroy(self.model); }
-    }
+    priv model: *mecab_model_t
 }
 
 /// Wrapped structure for `mecab_lattice_t`.
 pub struct MeCabLattice {
-    pub lattice: *mecab_lattice_t,
-    drop {
+    pub lattice: *mecab_lattice_t
+}
+
+impl Drop for MeCabDictionaryInfo {
+    fn finalize(&self) {}
+}
+
+impl Drop for MeCabNode {
+    fn finalize(&self) {}
+}
+
+impl Drop for MeCab {
+    fn finalize(&self) {
+        unsafe { mecab_destroy(self.mecab); }
+    }
+}
+
+impl Drop for MeCabModel {
+    fn finalize(&self) {
+        unsafe { mecab_model_destroy(self.model); }
+    }
+}
+
+impl Drop for MeCabLattice {
+    fn finalize(&self) {
         unsafe { mecab_lattice_destroy(self.lattice); }
     }
 }
