@@ -58,20 +58,20 @@ extern {
 }
 
 #[allow(non_camel_case_types)]
-priv struct mecab_t;
+struct mecab_t;
 
 #[allow(non_camel_case_types)]
-priv struct mecab_model_t;
+struct mecab_model_t;
 
 #[allow(non_camel_case_types)]
-priv struct mecab_lattice_t;
+struct mecab_lattice_t;
 
 /**
 Same structure of `mecab::mecab_path_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 */
 #[allow(non_camel_case_types)]
-priv struct mecab_path_t {
+struct mecab_path_t {
     rnode: *mecab_node_t,
     rnext: *mecab_path_t,
     lnode: *mecab_node_t,
@@ -85,7 +85,7 @@ Same structure of `mecab::mecab_node_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
 */
 #[allow(non_camel_case_types)]
-priv struct mecab_node_t {
+struct mecab_node_t {
     prev:      *mecab_node_t,
     next:      *mecab_node_t,
     enext:     *mecab_node_t,
@@ -115,7 +115,7 @@ Same structure of `mecab::mecab_dictionary_info_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
 */
 #[allow(non_camel_case_types)]
-priv struct mecab_dictionary_info_t {
+struct mecab_dictionary_info_t {
     filename: *c_char,
     charset:  *c_char,
     size:      c_uint,
@@ -177,7 +177,7 @@ pub struct MeCab {
 }
 
 /// Wrapped structure for `mecab_model_t`.
-priv struct MeCabModel {
+struct MeCabModel {
     priv model: *mecab_model_t,
     drop {
         unsafe { mecab_model_destroy(self.model); }
@@ -194,35 +194,55 @@ pub struct MeCabLattice {
 
 pub trait IMeCabDict {
     pure fn get_filename(&self) -> ~str;
-    pure fn get_charset(&self)  -> ~str;
-    pure fn get_size(&self)     -> uint;
-    pure fn get_type(&self)     ->  int;
-    pure fn get_lsize(&self)    -> uint;
-    pure fn get_rsize(&self)    -> uint;
-    pure fn get_version(&self)  -> uint;
+    pure fn get_charset(&self) -> ~str;
+    pure fn get_size(&self) -> uint;
+    pure fn get_type(&self) -> int;
+    pure fn get_lsize(&self) -> uint;
+    pure fn get_rsize(&self) -> uint;
+    pure fn get_version(&self) -> uint;
 }
 
 pub trait IMeCabNode {
     pure fn get_surface(&self) -> ~str;
     pure fn get_feature(&self) -> ~str;
-    pure fn get_status(&self)  ->   u8;
+    pure fn get_status(&self) -> u8;
 }
 
 pub impl IMeCabDict for *mecab_dictionary_info_t {
     /// Returns `mecab_dictionary_info_t.filename`.
-    pure fn get_filename(&self) -> ~str { unsafe { raw::from_c_str((**self).filename) } }
+    pure fn get_filename(&self) -> ~str {
+        unsafe { raw::from_c_str((**self).filename) }
+    }
+
     /// Returns `mecab_dictionary_info_t.charset`.
-    pure fn get_charset(&self)  -> ~str { unsafe { raw::from_c_str((**self).charset)  } }
+    pure fn get_charset(&self) -> ~str {
+        unsafe { raw::from_c_str((**self).charset) }
+    }
+
     /// Returns `mecab_dictionary_info_t.size`.
-    pure fn get_size(&self)     -> uint { unsafe { (**self).size    as uint } }
+    pure fn get_size(&self) -> uint {
+        unsafe { (**self).size as uint }
+    }
+
     /// Returns `mecab_dictionary_info_t.type`.
-    pure fn get_type(&self)     ->  int { unsafe { (**self).ty      as  int } }
+    pure fn get_type(&self) -> int {
+        unsafe { (**self).ty as int }
+    }
+
     /// Returns `mecab_dictionary_info_t.lsize`.
-    pure fn get_lsize(&self)    -> uint { unsafe { (**self).lsize   as uint } }
+    pure fn get_lsize(&self) -> uint {
+        unsafe { (**self).lsize as uint }
+    }
+
     /// Returns `mecab_dictionary_info_t.rsize`.
-    pure fn get_rsize(&self)    -> uint { unsafe { (**self).rsize   as uint } }
+    pure fn get_rsize(&self) -> uint {
+        unsafe { (**self).rsize as uint }
+    }
+
     /// Returns `mecab_dictionary_info_t.version`.
-    pure fn get_version(&self)  -> uint { unsafe { (**self).version as uint } }
+    pure fn get_version(&self) -> uint {
+        unsafe { (**self).version as uint }
+    }
 }
 
 pub impl IMeCabNode for *mecab_node_t {
