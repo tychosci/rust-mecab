@@ -177,7 +177,7 @@ pub struct MeCab {
 }
 
 /// Wrapped structure for `mecab_model_t`.
-struct MeCabModel {
+pub struct MeCabModel {
     priv model: *mecab_model_t,
     drop {
         unsafe { mecab_model_destroy(self.model); }
