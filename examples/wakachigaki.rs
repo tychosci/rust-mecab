@@ -1,13 +1,13 @@
 extern mod mecab;
 
 fn main() {
-    let mecab = mecab::new2("").unwrap();
+    let mecab = mecab::new2("");
 
     let input = "うらにわにはにわにわにはにわにわとりがいる";
 
     io::println(fmt!("input: %s", input));
 
-    let node = mecab.parse_to_node(input).unwrap();
+    let node = mecab.parse_to_node(input);
 
     io::print("output: ");
 

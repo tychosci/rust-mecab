@@ -193,55 +193,55 @@ pub struct MeCabLattice {
 }
 
 pub trait IMeCabDict {
-    pure fn get_filename() -> ~str;
-    pure fn get_charset()  -> ~str;
-    pure fn get_size()     -> uint;
-    pure fn get_type()     ->  int;
-    pure fn get_lsize()    -> uint;
-    pure fn get_rsize()    -> uint;
-    pure fn get_version()  -> uint;
+    pure fn get_filename(&self) -> ~str;
+    pure fn get_charset(&self)  -> ~str;
+    pure fn get_size(&self)     -> uint;
+    pure fn get_type(&self)     ->  int;
+    pure fn get_lsize(&self)    -> uint;
+    pure fn get_rsize(&self)    -> uint;
+    pure fn get_version(&self)  -> uint;
 }
 
 pub trait IMeCabNode {
-    pure fn get_surface() -> ~str;
-    pure fn get_feature() -> ~str;
-    pure fn get_status()  ->   u8;
+    pure fn get_surface(&self) -> ~str;
+    pure fn get_feature(&self) -> ~str;
+    pure fn get_status(&self)  ->   u8;
 }
 
 pub impl *mecab_dictionary_info_t : IMeCabDict {
     /// Returns `mecab_dictionary_info_t.filename`.
-    pure fn get_filename() -> ~str { unsafe { raw::from_c_str((*self).filename) } }
+    pure fn get_filename(&self) -> ~str { unsafe { raw::from_c_str((**self).filename) } }
     /// Returns `mecab_dictionary_info_t.charset`.
-    pure fn get_charset()  -> ~str { unsafe { raw::from_c_str((*self).charset)  } }
+    pure fn get_charset(&self)  -> ~str { unsafe { raw::from_c_str((**self).charset)  } }
     /// Returns `mecab_dictionary_info_t.size`.
-    pure fn get_size()     -> uint { unsafe { (*self).size    as uint } }
+    pure fn get_size(&self)     -> uint { unsafe { (**self).size    as uint } }
     /// Returns `mecab_dictionary_info_t.type`.
-    pure fn get_type()     ->  int { unsafe { (*self).ty      as  int } }
+    pure fn get_type(&self)     ->  int { unsafe { (**self).ty      as  int } }
     /// Returns `mecab_dictionary_info_t.lsize`.
-    pure fn get_lsize()    -> uint { unsafe { (*self).lsize   as uint } }
+    pure fn get_lsize(&self)    -> uint { unsafe { (**self).lsize   as uint } }
     /// Returns `mecab_dictionary_info_t.rsize`.
-    pure fn get_rsize()    -> uint { unsafe { (*self).rsize   as uint } }
+    pure fn get_rsize(&self)    -> uint { unsafe { (**self).rsize   as uint } }
     /// Returns `mecab_dictionary_info_t.version`.
-    pure fn get_version()  -> uint { unsafe { (*self).version as uint } }
+    pure fn get_version(&self)  -> uint { unsafe { (**self).version as uint } }
 }
 
 pub impl *mecab_node_t : IMeCabNode {
     /// Returns pre-sliced `mecab_node_t.surface`.
-    pure fn get_surface() -> ~str {
+    pure fn get_surface(&self) -> ~str {
         unsafe {
-            let s = raw::from_c_str((*self).surface);
-            str::slice(s, 0, (*self).length as uint)
+            let s = raw::from_c_str((**self).surface);
+            str::slice(s, 0, (**self).length as uint)
         }
     }
 
     /// Returns `mecab_node_t.feature`.
-    pure fn get_feature() -> ~str {
-        unsafe { raw::from_c_str((*self).feature) }
+    pure fn get_feature(&self) -> ~str {
+        unsafe { raw::from_c_str((**self).feature) }
     }
 
     /// Returns `mecab_node_t.status`.
-    pure fn get_status() -> u8 {
-        unsafe { (*self).stat }
+    pure fn get_status(&self) -> u8 {
+        unsafe { (**self).stat }
     }
 }
 
@@ -271,30 +271,30 @@ pub impl MeCabNode {
 
 pub impl MeCab {
     /// Parses input and may return the string of result.
-    fn parse(&self, input: &str) -> Result<~str, ~str> {
+    fn parse(&self, input: &str) -> ~str {
         let s = str::as_c_str(input, |buf| unsafe {
             mecab_sparse_tostr(self.mecab, buf)
         });
 
         if s.is_null() {
             let msg = self.strerror();
-            Err(msg)
+            die!(msg);
         } else {
-            Ok(unsafe { raw::from_c_str(s) })
+            unsafe { raw::from_c_str(s) }
         }
     }
 
     /// Parses input and may return `MeCabNode`.
-    fn parse_to_node(&self, input: &str) -> Result<MeCabNode, ~str> {
+    fn parse_to_node(&self, input: &str) -> MeCabNode {
         let node = str::as_c_str(input, |buf| unsafe {
             mecab_sparse_tonode(self.mecab, buf)
         });
 
         if node.is_null() {
             let msg = self.strerror();
-            Err(msg)
+            die!(msg);
         } else {
-            Ok(MeCabNode{node: node})
+            MeCabNode { node: node }
         }
     }
 
@@ -307,15 +307,15 @@ pub impl MeCab {
     }
 
     /// Returns `MeCabDictionaryInfo`.
-    fn get_dictionary_info(&self) -> Result<MeCabDictionaryInfo, ~str> {
+    fn get_dictionary_info(&self) -> MeCabDictionaryInfo {
         unsafe {
             let dict = mecab_dictionary_info(self.mecab);
 
             if dict.is_null() {
                 let msg = self.strerror();
-                Err(msg)
+                die!(msg);
             } else {
-                Ok(MeCabDictionaryInfo{dict: dict})
+                MeCabDictionaryInfo { dict: dict }
             }
         }
     }
@@ -330,27 +330,27 @@ pub impl MeCab {
 
 pub impl MeCabModel {
     /// Creates new tagger.
-    fn create_tagger(&self) -> Result<MeCab, ~str> {
+    fn create_tagger(&self) -> MeCab {
         unsafe {
             let mecab = mecab_model_new_tagger(self.model);
 
             if mecab.is_null() {
-                Err(~"failed to create new Tagger")
+                die!(~"failed to create new Tagger");
             } else {
-                Ok(MeCab{mecab: mecab})
+                MeCab { mecab: mecab }
             }
         }
     }
 
     /// Creates new lattice.
-    fn create_lattice(&self) -> Result<MeCabLattice, ~str> {
+    fn create_lattice(&self) -> MeCabLattice {
         unsafe {
             let lattice = mecab_model_new_lattice(self.model);
 
             if lattice.is_null() {
-                Err(~"failed to create new Lattice")
+                die!(~"failed to create new Lattice");
             } else {
-                Ok(MeCabLattice{lattice: lattice})
+                MeCabLattice { lattice: lattice }
             }
         }
     }
@@ -374,29 +374,29 @@ pub impl MeCabLattice {
     }
 
     /// Returns the beginning node of the sentence on success.
-    fn get_bos_node(&self) -> Result<MeCabNode, ~str> {
+    fn get_bos_node(&self) -> MeCabNode {
         unsafe {
             let node = mecab_lattice_get_bos_node(self.lattice);
 
             if node.is_null() {
                 let msg = self.strerror();
-                Err(msg)
+                die!(msg);
             } else {
-                Ok(MeCabNode{node: node})
+                MeCabNode { node: node }
             }
         }
     }
 
     /// Returns the end node of the sentence on success.
-    fn get_eos_node(&self) -> Result<MeCabNode, ~str> {
+    fn get_eos_node(&self) -> MeCabNode {
         unsafe {
             let node = mecab_lattice_get_eos_node(self.lattice);
 
             if node.is_null() {
                 let msg = self.strerror();
-                Err(msg)
+                die!(msg);
             } else {
-                Ok(MeCabNode{node: node})
+                MeCabNode { node: node }
             }
         }
     }
@@ -410,7 +410,7 @@ pub impl MeCabLattice {
 }
 
 /// The wrapper of `mecab::mecab_new` that may return `MeCab`.
-pub fn new(args: &[&str]) -> Result<MeCab, ~str> {
+pub fn new(args: &[&str]) -> MeCab {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
@@ -428,22 +428,22 @@ pub fn new(args: &[&str]) -> Result<MeCab, ~str> {
     });
 
     if mecab.is_null() {
-        Err(~"failed to create new instance")
+        die!(~"failed to create new instance");
     } else {
-        Ok(MeCab{mecab: mecab})
+        MeCab { mecab: mecab }
     }
 }
 
 /// The wrapper of `mecab::mecab_new2` that may return `MeCab`.
-pub fn new2(arg: &str) -> Result<MeCab, ~str> {
+pub fn new2(arg: &str) -> MeCab {
     let mecab = str::as_c_str(arg, |buf| unsafe {
         mecab_new2(buf)
     });
 
     if mecab.is_null() {
-        Err(~"failed to create new instance")
+        die!(~"failed to create new instance");
     } else {
-        Ok(MeCab{mecab: mecab})
+        MeCab { mecab: mecab }
     }
 }
 
@@ -451,7 +451,7 @@ pub fn new2(arg: &str) -> Result<MeCab, ~str> {
 The wrapper of `mecab::mecab_model_new` that
 may return uniquely managed `MeCabModel`.
 */
-pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
+pub fn model_new(args: &[&str]) -> ~MeCabModel {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
@@ -469,9 +469,9 @@ pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
     });
 
     if model.is_null() {
-        Err(~"failed to create new Model")
+        die!(~"failed to create new Model");
     } else {
-        Ok(~MeCabModel{model: model})
+        ~MeCabModel { model: model }
     }
 }
 
@@ -479,15 +479,15 @@ pub fn model_new(args: &[&str]) -> Result<~MeCabModel, ~str> {
 The wrapper of `mecab::mecab_model_new2` that
 may return uniquely managed `MeCabModel`.
 */
-pub fn model_new2(arg: &str) -> Result<~MeCabModel, ~str> {
+pub fn model_new2(arg: &str) -> ~MeCabModel {
     let model = str::as_c_str(arg, |buf| unsafe {
         mecab_model_new2(buf)
     });
 
     if model.is_null() {
-        Err(~"failed to create new Model")
+        die!(~"failed to create new Model");
     } else {
-        Ok(~MeCabModel{model: model})
+        ~MeCabModel { model: model }
     }
 }
 

@@ -5,7 +5,7 @@ use std::arc;
 
 fn main() {
     let s = "これはテストです";
-    let model = mecab::model_new2("").unwrap();
+    let model = mecab::model_new2("");
     let model = ~arc::ARC(model);
 
     for 2.times {
@@ -13,8 +13,8 @@ fn main() {
 
         do task::spawn {
             let model = arc::get(model);
-            let tagger = model.create_tagger().unwrap();
-            let lattice = model.create_lattice().unwrap();
+            let tagger = model.create_tagger();
+            let lattice = model.create_lattice();
 
             lattice.set_sentence(s);
 
@@ -26,8 +26,8 @@ fn main() {
     }
 
     let model = arc::get(model);
-    let tagger = model.create_tagger().unwrap();
-    let lattice = model.create_lattice().unwrap();
+    let tagger = model.create_tagger();
+    let lattice = model.create_lattice();
 
     lattice.set_sentence(s);
 

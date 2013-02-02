@@ -10,7 +10,7 @@ use mecab::UNK_NODE;
 fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
     let mut v = ~[];
 
-    let node = lattice.get_bos_node().unwrap();
+    let node = lattice.get_bos_node();
     for node.each |n| {
         let status = n.get_status();
 
@@ -31,7 +31,7 @@ fn main() {
         "昨日の夕食はカレーでした",
     ];
 
-    let model = mecab::model_new2("").unwrap();
+    let model = mecab::model_new2("");
     let model = ~arc::ARC(model);
 
     let (p, c) = pipes::stream();
@@ -43,8 +43,8 @@ fn main() {
 
         do task::spawn {
             let model = arc::get(model);
-            let tagger = model.create_tagger().unwrap();
-            let lattice = model.create_lattice().unwrap();
+            let tagger = model.create_tagger();
+            let lattice = model.create_lattice();
 
             lattice.set_sentence(sentence);
 
