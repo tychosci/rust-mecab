@@ -280,25 +280,29 @@ pub impl IMeCabNode for *mecab_node_t {
     }
 }
 
-pub impl MeCabDictionaryInfo {
-    /// Iterates all listed items on `mecab_dictionary_info_t`.
-    pure fn each(&self, blk: &fn(IMeCabDict) -> bool) {
+pub impl BaseIter<@IMeCabDict> for MeCabDictionaryInfo {
+    pure fn size_hint(&self) -> Option<uint> { None }
+
+    pure fn each(&self, blk: fn(&@IMeCabDict) -> bool) {
         let mut p = self.dict;
 
         while p.is_not_null() {
-            if !blk(p as IMeCabDict) { break; }
+            let p_ = p as IMeCabDict;
+            if !blk(&p_) { break; }
             unsafe { p = (*p).next; }
         }
     }
 }
 
-pub impl MeCabNode {
-    /// Iterates all listed items on `mecab_node_t`.
-    pure fn each(&self, blk: &fn(IMeCabNode) -> bool) {
+pub impl BaseIter<@IMeCabNode> for MeCabNode {
+    pure fn size_hint(&self) -> Option<uint> { None }
+
+    pure fn each(&self, blk: fn(&@IMeCabNode) -> bool) {
         let mut p = self.node;
 
         while p.is_not_null() {
-            if !blk(p as IMeCabNode) { break; }
+            let p_ = p as IMeCabNode;
+            if !blk(&p_) { break; }
             unsafe { p = (*p).next; }
         }
     }
