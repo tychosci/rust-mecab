@@ -221,6 +221,7 @@ pub trait IMeCabNode {
     pure fn get_surface(&self) -> ~str;
     pure fn get_feature(&self) -> ~str;
     pure fn get_status(&self) -> u8;
+    pure fn get_posid(&self) -> u16;
 }
 
 pub impl IMeCabDict for *mecab_dictionary_info_t {
@@ -277,6 +278,11 @@ pub impl IMeCabNode for *mecab_node_t {
     /// Returns `mecab_node_t.status`.
     pure fn get_status(&self) -> u8 {
         unsafe { (**self).stat }
+    }
+
+    /// Returns `mecab_node_t.posid`.
+    pure fn get_posid(&self) -> u16 {
+        unsafe { (**self).posid }
     }
 }
 
