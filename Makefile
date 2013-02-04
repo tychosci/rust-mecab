@@ -29,6 +29,9 @@ multithread-simple: setup-bin libmecab $(E)/multithread-simple.rs
 collect-nouns: setup-bin libmecab $(E)/collect-nouns.rs
 	rustc -O $(E)/collect-nouns.rs -L $(LIBDIR) --out-dir $(BINDIR)
 
+softwakachi: setup-bin libmecab $(E)/softwakachi.rs
+	rustc -O $(E)/softwakachi.rs -L $(LIBDIR) --out-dir $(BINDIR)
+
 setup-bin:
 	mkdir -p $(BINDIR)
 
