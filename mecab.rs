@@ -455,16 +455,16 @@ pub impl MeCabLattice {
 }
 
 /// The wrapper of `mecab::mecab_new` that may return `MeCab`.
-pub fn new(args: &[&str]) -> MeCab {
+pub fn new(args: &[~str]) -> MeCab {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
-    let mut tmps    = ~[];
+    let mut tmps = ~[];
 
     for args.each |arg| {
-        let t = @*arg;
+        let t = @copy *arg;
         tmps.push(t);
-        argptrs.push_all(str::as_c_str(*t, |b| ~[b]));
+        argptrs.push(str::as_c_str(*t, |b| b));
     }
     argptrs.push(ptr::null());
 
@@ -496,16 +496,16 @@ pub fn new2(arg: &str) -> MeCab {
 The wrapper of `mecab::mecab_model_new` that
 may return uniquely managed `MeCabModel`.
 */
-pub fn model_new(args: &[&str]) -> ~MeCabModel {
+pub fn model_new(args: &[~str]) -> ~MeCabModel {
     let argc = args.len() as c_int;
 
     let mut argptrs = ~[];
-    let mut tmps    = ~[];
+    let mut tmps = ~[];
 
     for args.each |arg| {
-        let t = @*arg;
+        let t = @copy *arg;
         tmps.push(t);
-        argptrs.push_all(str::as_c_str(*t, |b| ~[b]));
+        argptrs.push(str::as_c_str(*t, |b| b));
     }
     argptrs.push(ptr::null());
 
