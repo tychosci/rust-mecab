@@ -19,13 +19,13 @@ Examples
     extern mod mecab;
 
     fn main() {
-        let mecab = mecab::new2("").get();
+        let mecab = mecab::new2("");
 
         let input = "うらにわにはにわにわにはにわにわとりがいる";
 
         io::println(fmt!("input: %s", input));
 
-        let node = mecab.parse_to_node(input).get();
+        let node = mecab.parse_to_node(input);
 
         io::print("output: ");
 
