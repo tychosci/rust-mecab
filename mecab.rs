@@ -222,6 +222,9 @@ pub trait IMeCabNode {
     pure fn get_feature(&self) -> ~str;
     pure fn get_status(&self) -> u8;
     pure fn get_posid(&self) -> u16;
+    pure fn get_prob(&self) -> c_float;
+
+    pure fn is_best(&self) -> bool;
 }
 
 pub impl IMeCabDict for *mecab_dictionary_info_t {
@@ -283,6 +286,15 @@ pub impl IMeCabNode for *mecab_node_t {
     /// Returns `mecab_node_t.posid`.
     pure fn get_posid(&self) -> u16 {
         unsafe { (**self).posid }
+    }
+
+    /// Returns `mecab_node_t.prob`.
+    pure fn get_prob(&self) -> c_float {
+        unsafe { (**self).prob }
+    }
+
+    pure fn is_best(&self) -> bool {
+        unsafe { (**self).isbest == 1 }
     }
 }
 
