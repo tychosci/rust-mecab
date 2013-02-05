@@ -41,7 +41,7 @@ fn main() {
         let model = ~arc::clone(model);
         let c = c.clone();
 
-        do task::spawn {
+        do task::spawn_supervised {
             let model = arc::get(model);
             let tagger = model.create_tagger();
             let lattice = model.create_lattice();
