@@ -414,7 +414,7 @@ pub impl MeCabModel {
 }
 
 pub impl ToStr for MeCabLattice {
-    pure fn to_str() -> ~str {
+    pure fn to_str(&self) -> ~str {
         unsafe {
             let s = mecab_lattice_tostr(self.lattice);
             raw::from_c_str(s)
