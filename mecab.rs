@@ -335,7 +335,7 @@ pub impl MeCab {
 
         if s.is_null() {
             let msg = self.strerror();
-            die!(msg);
+            fail!(msg);
         } else {
             unsafe { raw::from_c_str(s) }
         }
@@ -349,7 +349,7 @@ pub impl MeCab {
 
         if node.is_null() {
             let msg = self.strerror();
-            die!(msg);
+            fail!(msg);
         } else {
             MeCabNode { node: node }
         }
@@ -370,7 +370,7 @@ pub impl MeCab {
 
             if dict.is_null() {
                 let msg = self.strerror();
-                die!(msg);
+                fail!(msg);
             } else {
                 MeCabDictionaryInfo { dict: dict }
             }
@@ -392,7 +392,7 @@ pub impl MeCabModel {
             let mecab = mecab_model_new_tagger(self.model);
 
             if mecab.is_null() {
-                die!(~"failed to create new Tagger");
+                fail!(~"failed to create new Tagger");
             } else {
                 MeCab { mecab: mecab }
             }
@@ -405,7 +405,7 @@ pub impl MeCabModel {
             let lattice = mecab_model_new_lattice(self.model);
 
             if lattice.is_null() {
-                die!(~"failed to create new Lattice");
+                fail!(~"failed to create new Lattice");
             } else {
                 MeCabLattice { lattice: lattice }
             }
@@ -437,7 +437,7 @@ pub impl MeCabLattice {
 
             if node.is_null() {
                 let msg = self.strerror();
-                die!(msg);
+                fail!(msg);
             } else {
                 MeCabNode { node: node }
             }
@@ -451,7 +451,7 @@ pub impl MeCabLattice {
 
             if node.is_null() {
                 let msg = self.strerror();
-                die!(msg);
+                fail!(msg);
             } else {
                 MeCabNode { node: node }
             }
@@ -485,7 +485,7 @@ pub fn new(args: &[~str]) -> MeCab {
     });
 
     if mecab.is_null() {
-        die!(~"failed to create new instance");
+        fail!(~"failed to create new instance");
     } else {
         MeCab { mecab: mecab }
     }
@@ -498,7 +498,7 @@ pub fn new2(arg: &str) -> MeCab {
     });
 
     if mecab.is_null() {
-        die!(~"failed to create new instance");
+        fail!(~"failed to create new instance");
     } else {
         MeCab { mecab: mecab }
     }
@@ -526,7 +526,7 @@ pub fn model_new(args: &[~str]) -> ~MeCabModel {
     });
 
     if model.is_null() {
-        die!(~"failed to create new Model");
+        fail!(~"failed to create new Model");
     } else {
         ~MeCabModel { model: model }
     }
@@ -542,7 +542,7 @@ pub fn model_new2(arg: &str) -> ~MeCabModel {
     });
 
     if model.is_null() {
-        die!(~"failed to create new Model");
+        fail!(~"failed to create new Model");
     } else {
         ~MeCabModel { model: model }
     }
