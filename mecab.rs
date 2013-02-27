@@ -227,7 +227,7 @@ pub trait IMeCabNode {
     pure fn is_best(&self) -> bool;
 }
 
-pub impl IMeCabDict for *mecab_dictionary_info_t {
+impl IMeCabDict for *mecab_dictionary_info_t {
     /// Returns `mecab_dictionary_info_t.filename`.
     pure fn get_filename(&self) -> ~str {
         unsafe { raw::from_c_str((**self).filename) }
@@ -264,7 +264,7 @@ pub impl IMeCabDict for *mecab_dictionary_info_t {
     }
 }
 
-pub impl IMeCabNode for *mecab_node_t {
+impl IMeCabNode for *mecab_node_t {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface(&self) -> ~str {
         unsafe {
@@ -298,7 +298,7 @@ pub impl IMeCabNode for *mecab_node_t {
     }
 }
 
-pub impl BaseIter<@IMeCabDict> for MeCabDictionaryInfo {
+impl BaseIter<@IMeCabDict> for MeCabDictionaryInfo {
     pure fn size_hint(&self) -> Option<uint> { None }
 
     pure fn each(&self, blk: fn(&@IMeCabDict) -> bool) {
@@ -312,7 +312,7 @@ pub impl BaseIter<@IMeCabDict> for MeCabDictionaryInfo {
     }
 }
 
-pub impl BaseIter<@IMeCabNode> for MeCabNode {
+impl BaseIter<@IMeCabNode> for MeCabNode {
     pure fn size_hint(&self) -> Option<uint> { None }
 
     pure fn each(&self, blk: fn(&@IMeCabNode) -> bool) {
@@ -326,7 +326,7 @@ pub impl BaseIter<@IMeCabNode> for MeCabNode {
     }
 }
 
-pub impl MeCab {
+impl MeCab {
     /// Parses input and may return the string of result.
     fn parse(&self, input: &str) -> ~str {
         let s = str::as_c_str(input, |buf| unsafe {
@@ -385,7 +385,7 @@ pub impl MeCab {
     }
 }
 
-pub impl MeCabModel {
+impl MeCabModel {
     /// Creates new tagger.
     fn create_tagger(&self) -> MeCab {
         unsafe {
@@ -413,7 +413,7 @@ pub impl MeCabModel {
     }
 }
 
-pub impl ToStr for MeCabLattice {
+impl ToStr for MeCabLattice {
     pure fn to_str(&self) -> ~str {
         unsafe {
             let s = mecab_lattice_tostr(self.lattice);
@@ -422,7 +422,7 @@ pub impl ToStr for MeCabLattice {
     }
 }
 
-pub impl MeCabLattice {
+impl MeCabLattice {
     /// Set input of the lattice.
     fn set_sentence(&self, input: &str) {
         do str::as_c_str(input) |buf| {
