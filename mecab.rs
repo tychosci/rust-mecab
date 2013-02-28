@@ -326,7 +326,7 @@ impl BaseIter<@IMeCabNode> for MeCabNode {
     }
 }
 
-impl MeCab {
+pub impl MeCab {
     /// Parses input and may return the string of result.
     fn parse(&self, input: &str) -> ~str {
         let s = str::as_c_str(input, |buf| unsafe {
@@ -385,7 +385,7 @@ impl MeCab {
     }
 }
 
-impl MeCabModel {
+pub impl MeCabModel {
     /// Creates new tagger.
     fn create_tagger(&self) -> MeCab {
         unsafe {
@@ -422,7 +422,7 @@ impl ToStr for MeCabLattice {
     }
 }
 
-impl MeCabLattice {
+pub impl MeCabLattice {
     /// Set input of the lattice.
     fn set_sentence(&self, input: &str) {
         do str::as_c_str(input) |buf| {
