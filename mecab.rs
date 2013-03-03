@@ -227,100 +227,98 @@ pub trait IMeCabNode {
     pure fn is_best(&self) -> bool;
 }
 
-impl IMeCabDict for *mecab_dictionary_info_t {
+impl IMeCabDict for mecab_dictionary_info_t {
     /// Returns `mecab_dictionary_info_t.filename`.
     pure fn get_filename(&self) -> ~str {
-        unsafe { raw::from_c_str((**self).filename) }
+        unsafe { raw::from_c_str(self.filename) }
     }
 
     /// Returns `mecab_dictionary_info_t.charset`.
     pure fn get_charset(&self) -> ~str {
-        unsafe { raw::from_c_str((**self).charset) }
+        unsafe { raw::from_c_str(self.charset) }
     }
 
     /// Returns `mecab_dictionary_info_t.size`.
     pure fn get_size(&self) -> uint {
-        unsafe { (**self).size as uint }
+        unsafe { self.size as uint }
     }
 
     /// Returns `mecab_dictionary_info_t.type`.
     pure fn get_type(&self) -> int {
-        unsafe { (**self).ty as int }
+        unsafe { self.ty as int }
     }
 
     /// Returns `mecab_dictionary_info_t.lsize`.
     pure fn get_lsize(&self) -> uint {
-        unsafe { (**self).lsize as uint }
+        unsafe { self.lsize as uint }
     }
 
     /// Returns `mecab_dictionary_info_t.rsize`.
     pure fn get_rsize(&self) -> uint {
-        unsafe { (**self).rsize as uint }
+        unsafe { self.rsize as uint }
     }
 
     /// Returns `mecab_dictionary_info_t.version`.
     pure fn get_version(&self) -> uint {
-        unsafe { (**self).version as uint }
+        unsafe { self.version as uint }
     }
 }
 
-impl IMeCabNode for *mecab_node_t {
+impl IMeCabNode for mecab_node_t {
     /// Returns pre-sliced `mecab_node_t.surface`.
     pure fn get_surface(&self) -> ~str {
         unsafe {
-            let s = raw::from_c_str((**self).surface);
-            str::slice(s, 0, (**self).length as uint)
+            let s = raw::from_c_str(self.surface);
+            str::slice(s, 0, self.length as uint)
         }
     }
 
     /// Returns `mecab_node_t.feature`.
     pure fn get_feature(&self) -> ~str {
-        unsafe { raw::from_c_str((**self).feature) }
+        unsafe { raw::from_c_str(self.feature) }
     }
 
     /// Returns `mecab_node_t.status`.
     pure fn get_status(&self) -> u8 {
-        unsafe { (**self).stat }
+        unsafe { self.stat }
     }
 
     /// Returns `mecab_node_t.posid`.
     pure fn get_posid(&self) -> u16 {
-        unsafe { (**self).posid }
+        unsafe { self.posid }
     }
 
     /// Returns `mecab_node_t.prob`.
     pure fn get_prob(&self) -> c_float {
-        unsafe { (**self).prob }
+        unsafe { self.prob }
     }
 
     pure fn is_best(&self) -> bool {
-        unsafe { (**self).isbest == 1 }
+        unsafe { self.isbest == 1 }
     }
 }
 
-impl BaseIter<@IMeCabDict> for MeCabDictionaryInfo {
+impl BaseIter<mecab_dictionary_info_t> for MeCabDictionaryInfo {
     pure fn size_hint(&self) -> Option<uint> { None }
 
-    pure fn each(&self, blk: fn(&@IMeCabDict) -> bool) {
+    pure fn each(&self, blk: fn(&mecab_dictionary_info_t) -> bool) {
         let mut p = self.dict;
 
         while p.is_not_null() {
-            let p_ = p as IMeCabDict;
-            if !blk(&p_) { break; }
+            if !blk(unsafe { cast::transmute(p) }) { break; }
             unsafe { p = (*p).next; }
         }
     }
 }
 
-impl BaseIter<@IMeCabNode> for MeCabNode {
+impl BaseIter<mecab_node_t> for MeCabNode {
     pure fn size_hint(&self) -> Option<uint> { None }
 
-    pure fn each(&self, blk: fn(&@IMeCabNode) -> bool) {
+    pure fn each(&self, blk: fn(&mecab_node_t) -> bool) {
         let mut p = self.node;
 
         while p.is_not_null() {
-            let p_ = p as IMeCabNode;
-            if !blk(&p_) { break; }
+            if !blk(unsafe { cast::transmute(p) }) { break; }
             unsafe { p = (*p).next; }
         }
     }
