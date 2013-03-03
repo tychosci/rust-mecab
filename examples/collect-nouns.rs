@@ -34,8 +34,8 @@ fn main() {
     let model = mecab::model_new2("");
     let model = ~arc::ARC(model);
 
-    let (p, c) = pipes::stream();
-    let c = pipes::SharedChan(c);
+    let (p, c) = comm::stream();
+    let c = comm::SharedChan(c);
 
     for sentences.each |&sentence| {
         let model = ~arc::clone(model);
