@@ -3,7 +3,7 @@ use super::*;
 #[test]
 fn test_mecab_version() {
     let vers = version();
-    assert !vers.is_empty();
+    fail_unless!(!vers.is_empty());
 }
 
 #[test]

@@ -301,7 +301,7 @@ impl IMeCabNode for mecab_node_t {
 impl BaseIter<mecab_dictionary_info_t> for MeCabDictionaryInfo {
     pure fn size_hint(&self) -> Option<uint> { None }
 
-    pure fn each(&self, blk: fn(&mecab_dictionary_info_t) -> bool) {
+    pure fn each(&self, blk: &fn(&mecab_dictionary_info_t) -> bool) {
         let mut p = self.dict;
 
         while p.is_not_null() {
@@ -314,7 +314,7 @@ impl BaseIter<mecab_dictionary_info_t> for MeCabDictionaryInfo {
 impl BaseIter<mecab_node_t> for MeCabNode {
     pure fn size_hint(&self) -> Option<uint> { None }
 
-    pure fn each(&self, blk: fn(&mecab_node_t) -> bool) {
+    pure fn each(&self, blk: &fn(&mecab_node_t) -> bool) {
         let mut p = self.node;
 
         while p.is_not_null() {
