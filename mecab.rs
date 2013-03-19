@@ -130,31 +130,31 @@ struct mecab_dictionary_info_t {
 Parameters for `mecab_node_t.stat` Normal node
 defined in the dictionary.
 */
-pub const NOR_NODE: u8 = 0u8;
+pub static NOR_NODE: u8 = 0u8;
 
 /**
 Parameters for `mecab_node_t.stat` Unknown node
 not defined in the dictionary.
 */
-pub const UNK_NODE: u8 = 1u8;
+pub static UNK_NODE: u8 = 1u8;
 
 /**
 Parameters for `mecab_node_t.stat` Virtual node
 representing a beginning of the sentence.
 */
-pub const BOS_NODE: u8 = 2u8;
+pub static BOS_NODE: u8 = 2u8;
 
 /**
 Parameters for `mecab_node_t.stat` Virtual node
 representing a end of the sentence.
 */
-pub const EOS_NODE: u8 = 3u8;
+pub static EOS_NODE: u8 = 3u8;
 
 /**
 Parameters for `mecab_node_t.stat` Virtual node
 representing a end of the N-best enumeration.
 */
-pub const EON_NODE: u8 = 4u8;
+pub static EON_NODE: u8 = 4u8;
 
 /// Wrapped structure for `mecab_dictionary_info_t`.
 pub struct MeCabDictionaryInfo {
