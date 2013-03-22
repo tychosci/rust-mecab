@@ -269,7 +269,7 @@ impl IMeCabNode for mecab_node_t {
     fn get_surface(&self) -> ~str {
         unsafe {
             let s = raw::from_c_str(self.surface);
-            str::slice(s, 0, self.length as uint)
+            str::slice(s, 0, self.length as uint).to_owned()
         }
     }
 
