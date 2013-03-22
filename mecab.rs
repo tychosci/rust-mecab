@@ -15,6 +15,8 @@ This binding is licensed under the same license of MeCab.
 #[license = "GPL/LGPL/BSD"];
 #[crate_type = "lib"];
 
+#[allow(non_camel_case_types)];
+
 extern mod std;
 
 use core::str::raw;
@@ -57,20 +59,16 @@ extern {
     fn mecab_lattice_strerror(lattice: *mecab_lattice_t) -> *c_char;
 }
 
-#[allow(non_camel_case_types)]
 struct mecab_t;
 
-#[allow(non_camel_case_types)]
 struct mecab_model_t;
 
-#[allow(non_camel_case_types)]
 struct mecab_lattice_t;
 
 /**
 Same structure of `mecab::mecab_path_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 */
-#[allow(non_camel_case_types)]
 struct mecab_path_t {
     rnode: *mecab_node_t,
     rnext: *mecab_path_t,
@@ -84,7 +82,6 @@ struct mecab_path_t {
 Same structure of `mecab::mecab_node_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
 */
-#[allow(non_camel_case_types)]
 struct mecab_node_t {
     prev:      *mecab_node_t,
     next:      *mecab_node_t,
@@ -114,7 +111,6 @@ struct mecab_node_t {
 Same structure of `mecab::mecab_dictionary_info_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
 */
-#[allow(non_camel_case_types)]
 struct mecab_dictionary_info_t {
     filename: *c_char,
     charset:  *c_char,
