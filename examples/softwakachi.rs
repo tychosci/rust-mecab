@@ -1,5 +1,7 @@
 extern mod mecab;
 
+use mecab::IMeCabNode;
+
 fn main() {
     let mecab = mecab::new2("-m -a");
     let node = mecab.parse_to_node("東京特許許可局");

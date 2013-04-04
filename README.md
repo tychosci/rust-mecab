@@ -18,6 +18,8 @@ Examples
 
     extern mod mecab;
 
+    use mecab::IMeCabNode;
+
     fn main() {
         let mecab = mecab::new2("");
 

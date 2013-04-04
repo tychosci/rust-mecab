@@ -3,6 +3,7 @@ extern mod mecab;
 
 use std::arc;
 
+use mecab::IMeCabNode;
 use mecab::MeCabLattice;
 use mecab::NOR_NODE;
 use mecab::UNK_NODE;
@@ -16,8 +17,9 @@ fn collect_nouns(lattice: &MeCabLattice) -> ~[~str] {
 
         if status == NOR_NODE || status == UNK_NODE {
             let feature = n.get_feature();
-            if str::eq_slice(feature.split_str(",")[0], "名詞") {
-                v.push(n.get_surface());
+            for feature.each_split_char(',') |s| {
+                if s == "名詞" { v.push(n.get_surface()); }
+                break;
             }
         }
     }

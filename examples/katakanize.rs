@@ -1,5 +1,7 @@
 extern mod mecab;
 
+use mecab::IMeCabNode;
+
 fn main() {
     let mecab = mecab::new2("");
 
@@ -15,8 +17,12 @@ fn main() {
         let status = n.get_status();
 
         if status == mecab::NOR_NODE {
+            let mut i = 0;
             let feature = n.get_feature();
-            io::print(fmt!("%s", feature.split_str(",")[7]));
+            for feature.each_split_char(',') |s| {
+                if i == 7 { io::print(fmt!("%s", s)); }
+                i += 1;
+            }
         }
     }
 
