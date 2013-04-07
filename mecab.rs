@@ -70,12 +70,12 @@ Same structure of `mecab::mecab_path_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__path__t.html>
 */
 struct mecab_path_t {
-    rnode: *mecab_node_t,
-    rnext: *mecab_path_t,
-    lnode: *mecab_node_t,
-    lnext: *mecab_path_t,
-    cost:   c_int,
-    prob:   c_float,
+    priv rnode: *mecab_node_t,
+    priv rnext: *mecab_path_t,
+    priv lnode: *mecab_node_t,
+    priv lnext: *mecab_path_t,
+    priv cost:   c_int,
+    priv prob:   c_float,
 }
 
 /**
@@ -83,28 +83,28 @@ Same structure of `mecab::mecab_node_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__node__t.html>
 */
 struct mecab_node_t {
-    prev:      *mecab_node_t,
-    next:      *mecab_node_t,
-    enext:     *mecab_node_t,
-    bnext:     *mecab_node_t,
-    rpath:     *mecab_path_t,
-    lpath:     *mecab_path_t,
-    surface:   *c_char,
-    feature:   *c_char,
-    id:         c_uint,
-    length:     u16,
-    rlength:    u16,
-    rcAttr:     u16,
-    lcAttr:     u16,
-    posid:      u16,
-    char_type:  u8,
-    stat:       u8,
-    isbest:     u8,
-    alpha:      c_float,
-    beta:       c_float,
-    prob:       c_float,
-    wcost:      i16,
-    cost:       c_long,
+    priv prev:      *mecab_node_t,
+    priv next:      *mecab_node_t,
+    priv enext:     *mecab_node_t,
+    priv bnext:     *mecab_node_t,
+    priv rpath:     *mecab_path_t,
+    priv lpath:     *mecab_path_t,
+    priv surface:   *c_char,
+    priv feature:   *c_char,
+    priv id:         c_uint,
+    priv length:     u16,
+    priv rlength:    u16,
+    priv rcAttr:     u16,
+    priv lcAttr:     u16,
+    priv posid:      u16,
+    priv char_type:  u8,
+    priv stat:       u8,
+    priv isbest:     u8,
+    priv alpha:      c_float,
+    priv beta:       c_float,
+    priv prob:       c_float,
+    priv wcost:      i16,
+    priv cost:       c_long,
 }
 
 /**
@@ -112,14 +112,14 @@ Same structure of `mecab::mecab_dictionary_info_t` that documented in
 <http://mecab.sourceforge.net/doxygen/structmecab__dictionary__info__t.html>
 */
 struct mecab_dictionary_info_t {
-    filename: *c_char,
-    charset:  *c_char,
-    size:      c_uint,
-    ty:        c_int,
-    lsize:     c_uint,
-    rsize:     c_uint,
-    version:   u16,
-    next:     *mecab_dictionary_info_t,
+    priv filename: *c_char,
+    priv charset:  *c_char,
+    priv size:      c_uint,
+    priv ty:        c_int,
+    priv lsize:     c_uint,
+    priv rsize:     c_uint,
+    priv version:   u16,
+    priv next:     *mecab_dictionary_info_t,
 }
 
 /**
